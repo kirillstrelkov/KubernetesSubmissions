@@ -6,9 +6,6 @@
 2. Deploy `kubectl apply -f manifests/deployment.yaml`
 3. Find pod with `kubectl get pods`
 4. Get logs with `kubectl logs -f <pod-name>`
+5. Deploy service `kubectl apply -f manifests/service.yaml`
 
-### To forward port
-
-```bash
-kubectl port-forward <pod-name> 3000:8080
-```
+NOTE: create cluster with `k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2`
