@@ -8,9 +8,33 @@ import (
 )
 
 func todoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprintf(w, "Welcome to the Todo Application Server!\nPath requested: %s", r.URL.Path)
+	greeting := os.Getenv("GREETING")
+	if greeting == "" {
+		greeting = "Hello World"
+	}
+
+	html := `<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+</head>
+<body>
+    <h1>%s</h1>
+</body>
+</html>`
+	fmt.Fprintf(w, html, greeting)
 }
 
 func main() {
