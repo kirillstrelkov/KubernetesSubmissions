@@ -1,4 +1,4 @@
-module kstrelkov/log_output
+module kstrelkov/log_output_writer
 
 go 1.25.3
 

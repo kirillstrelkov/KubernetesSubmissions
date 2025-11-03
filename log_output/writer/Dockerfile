@@ -7,12 +7,12 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /log_output
+RUN CGO_ENABLED=0 GOOS=linux go build -o /log_output_writer
 
 FROM alpine:latest
 
 WORKDIR /root/
 
-COPY --from=builder /log_output .
+COPY --from=builder /log_output_writer .
 
-CMD ["./log_output"]
+CMD ["./log_output_writer"]
