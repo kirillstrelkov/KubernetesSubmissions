@@ -22,3 +22,8 @@ docker-build:
 
 docker-run:
 	docker run --rm todo-app-app
+
+deploy: docker-build
+	docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/todoapp
+	k3d image import todo-app-app
+	kubectl apply -f manifests

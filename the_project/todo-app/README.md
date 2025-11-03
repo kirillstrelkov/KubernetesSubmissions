@@ -2,9 +2,7 @@
 
 ## Deploy to k3d cluster
 
-1. Import image `k3d image import todo-app-app`
-2. Deploy all `kubectl apply -f manifests`
-3. Find pod with `kubectl get pods`
-4. Get logs with `kubectl logs -f <pod-name>`
+1. Build, import and deploy `make deploy`
 
 NOTE: create cluster with `k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2`
+NOTE 2: make folder in agent0 `docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/todoapp`

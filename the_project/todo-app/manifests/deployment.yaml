@@ -18,6 +18,10 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
-          env:
-            - name: GREETING
-              value: "Hello from the environment"
+          volumeMounts:
+            - name: todo-app-vol
+              mountPath: /tmp
+      volumes:
+        - name: todo-app-vol
+          persistentVolumeClaim:
+            claimName: todo-app-pvc
