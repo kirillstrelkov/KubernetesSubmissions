@@ -44,7 +44,8 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	response := readFile("/tmp/output.txt")
-	if response == "" {
+	counter := readFile("/tmp/counter.txt")
+	if response == "" || counter == "" {
 		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprint(w, "No content")
 		return
@@ -52,5 +53,8 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Printf("File content: %s", response)
+	fmt.Printf("Counter: %s", counter)
+
 	fmt.Fprint(w, response)
+	fmt.Fprintf(w, "Ping / Pongs: %s", counter)
 }

@@ -12,9 +12,16 @@ spec:
       labels:
         app: ping-pong-app
     spec:
+      volumes:
+        - name: shared-tmp
+          persistentVolumeClaim:
+            claimName: ping-pong-pv-claim
       containers:
         - name: ping-pong-app
           image: ping-pong-app:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
+          volumeMounts:
+            - name: shared-tmp
+              mountPath: /tmp

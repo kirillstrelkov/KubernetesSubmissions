@@ -13,21 +13,22 @@ spec:
         app: log-output-app
     spec:
       volumes:
-        - name: shared-image
-          emptyDir: {}
+        - name: shared-tmp
+          persistentVolumeClaim:
+            claimName: ping-pong-pv-claim
       containers:
         - name: log-output-writer-app
           image: log-output-writer-app:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
-          volumeMounts: # Mount volume
-            - name: shared-image
+          volumeMounts:
+            - name: shared-tmp
               mountPath: /tmp
 
         - name: log-output-reader-app
           image: log-output-reader-app:latest
           imagePullPolicy: Never
-          volumeMounts: # Mount volume
-            - name: shared-image
+          volumeMounts:
+            - name: shared-tmp
               mountPath: /tmp
