@@ -21,7 +21,7 @@ docker-build:
 	docker build -t todo-app-app .
 
 docker-run:
-	docker run --rm todo-app-app
+	docker run --rm -p 8080:8080 todo-app-app
 
 deploy: docker-build
 	docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/todoapp

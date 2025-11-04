@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"math/rand"
@@ -30,20 +31,14 @@ func todoHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	html := `<!DOCTYPE html>
-<html>
-<head>
-    <title>The project App</title>
-</head>
-<body>
-    <h1>The project App</h1>
-	</br>
-	<img src="/image" alt="Random image" width="200" height="200"/>
-	</br>
-	<p>DevOps with Kubernetes 2025</p>
-</body>
-</html>`
-	fmt.Fprint(w, html)
+
+	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	err := tmpl.Execute(w, nil)
+
+	if err != nil {
+		log.Printf("Error executing template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
 
 func main() {
@@ -57,6 +52,8 @@ func main() {
 
 	if _, err := os.Stat(imagePath); err != nil {
 		fetchAndCacheImage()
+	} else {
+		fmt.Printf("Using cached image: %s\n", imagePath)
 	}
 
 	addr := ":" + port
