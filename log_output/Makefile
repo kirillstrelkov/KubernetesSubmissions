@@ -1,17 +1,29 @@
-all: docker-build import
+all: docker-build import k3d-apply
 
-.PHONY: build import docker-build docker-run
+.PHONY: all fmt lint build run import docker-build docker-run
 
+fmt:
+	go fmt ./...
+	go run golang.org/x/tools/cmd/goimports@latest -w .
+
+lint:
+	go vet ./...
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run
+
+build:
+	go build
+
+run:
+	go run main.go
 
 import:
-	k3d image import log-output-writer-app
-	k3d image import log-output-reader-app
-
+	k3d image import log-output-app
 
 docker-build:
-	docker build -t log-output-writer-app ./writer
-	docker build -t log-output-reader-app ./reader
+	docker build -t log-output-app .
 
 docker-run:
-	docker run -d --rm log-output-writer-app
-	docker run -d --rm log-output-reader-app
+	docker run -d --rm log-output-app
+
+k3d-apply:
+	kubectl apply -f manifests

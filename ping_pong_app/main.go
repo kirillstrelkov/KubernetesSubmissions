@@ -9,30 +9,21 @@ import (
 
 var counter int
 
-func write(filePath, line string) {
-	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, 0644)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	if _, err := f.WriteString(line); err != nil {
-		log.Fatal(err)
-	}
-}
-
 func handler(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		counter++
 	}()
 
-	write("/tmp/counter.txt", fmt.Sprintf("%d", counter))
-
 	response := fmt.Sprintf("pong %v\n", counter)
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, response)
+}
+
+func handlerPings(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%d", counter)
 }
 
 func main() {
@@ -46,6 +37,7 @@ func main() {
 	fmt.Printf("Server started in port %s\n", port)
 
 	http.HandleFunc("/pingpong", handler)
+	http.HandleFunc("/pings", handlerPings)
 
 	log.Fatal(http.ListenAndServe(addr, nil))
 }

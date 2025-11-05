@@ -12,23 +12,12 @@ spec:
       labels:
         app: log-output-app
     spec:
-      volumes:
-        - name: shared-tmp
-          persistentVolumeClaim:
-            claimName: ping-pong-pv-claim
       containers:
-        - name: log-output-writer-app
-          image: log-output-writer-app:latest
+        - name: log-output-app
+          image: log-output-app:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
-          volumeMounts:
-            - name: shared-tmp
-              mountPath: /tmp
-
-        - name: log-output-reader-app
-          image: log-output-reader-app:latest
-          imagePullPolicy: Never
-          volumeMounts:
-            - name: shared-tmp
-              mountPath: /tmp
+          env:
+            - name: PING_PONG_SERVICE
+              value: ping-pong-svc:3456

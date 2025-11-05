@@ -1,4 +1,4 @@
-all: fmt lint
+all: docker-build import k3d-apply
 
 .PHONY: all fmt lint build run
 
@@ -22,3 +22,9 @@ docker-build:
 
 docker-run:
 	docker run --rm ping-pong-app
+
+import:
+	k3d image import ping-pong-app
+
+k3d-apply:
+	kubectl apply -f manifests
