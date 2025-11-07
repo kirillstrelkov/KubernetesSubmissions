@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -17,6 +18,45 @@ const (
 )
 
 var isOldImage = false
+var urlPosts = "http://localhost:8080/posts"
+
+type Post struct {
+	Body string `json:"body"`
+}
+
+type TemplateData struct {
+	Posts []Post
+}
+
+func getPosts() []Post {
+	var posts []Post
+
+	fmt.Printf("Fetching... %s\n", urlPosts)
+
+	resp, err := http.Get(urlPosts)
+	if err != nil {
+		fmt.Printf("Error making request: %v", err)
+		return posts
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Received non-OK status code: %d", resp.StatusCode)
+		return posts
+
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&posts)
+	if err != nil {
+		fmt.Printf("Error reading response body: %v", err)
+		return posts
+	}
+
+	fmt.Printf("Received %d posts\n", len(posts))
+
+	return posts
+}
 
 func todoHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -33,7 +73,13 @@ func todoHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	tmpl := template.Must(template.ParseFiles("templates/index.html"))
-	err := tmpl.Execute(w, nil)
+	posts := getPosts()
+
+	data := TemplateData{
+		Posts: posts,
+	}
+
+	err := tmpl.Execute(w, data)
 
 	if err != nil {
 		log.Printf("Error executing template: %v", err)
@@ -42,6 +88,10 @@ func todoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	if url := os.Getenv("POSTS_URL"); url != "" {
+		urlPosts = url
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -57,7 +107,6 @@ func main() {
 	}
 
 	addr := ":" + port
-
 	fmt.Printf("Server started in port %s\n", port)
 
 	http.HandleFunc("/image", imageHandler)

@@ -11,19 +11,22 @@
     <img src="/image" alt="Random image" width="200" height="200" />
 
     <div class="todo-input-container">
-        <input type="text" placeholder="">
-        <button>Create todo</button>
+        <form action="/posts" method="post">
+            <input type="text" name="body" placeholder="What needs to be done?">
+            <button type="submit">Create todo</button>
+        </form>
     </div>
 
     <ul>
-        <li>Learn JavaScript</li>
-        <li>Learn React</li>
-        <li>Build a project</li>
+        {{range .Posts}}
+        <li>{{.Body}}</li>
+        {{end}}
     </ul>
 
     <div class="footer">
         DevOps with Kubernetes 2025
     </div>
+
 </body>
 
 </html>

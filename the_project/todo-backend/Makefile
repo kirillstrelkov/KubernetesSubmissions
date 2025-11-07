@@ -18,12 +18,10 @@ run:
 	go run main.go
 
 docker-build:
-	docker build -t todo-app-app .
+	docker build -t todo-backend-app .
 
 docker-run:
-	docker run --rm -e POSTS_URL=http://localhost:8085/posts -p 8080:8080 todo-app-app
+	docker run --rm -e PORT=8085 -p 8085:8085 todo-backend-app
 
 deploy: docker-build
-	docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/todoapp
-	k3d image import todo-app-app
-	kubectl apply -f manifests
+	k3d image import todo-backend-app

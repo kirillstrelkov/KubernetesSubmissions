@@ -21,6 +21,17 @@ spec:
           volumeMounts:
             - name: todo-app-vol
               mountPath: /tmp
+          env:
+            - name: POSTS_URL
+              value: "http://todo-backend-svc:8085/posts"
+        - name: todo-backend-app
+          image: todo-backend-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8085
+          env:
+            - name: PORT
+              value: "8085"
       volumes:
         - name: todo-app-vol
           persistentVolumeClaim:
