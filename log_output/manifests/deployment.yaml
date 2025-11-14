@@ -22,3 +22,15 @@ spec:
           env:
             - name: PING_PONG_SERVICE
               value: ping-pong-svc:3456
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: log-output-cm
+                  key: MESSAGE
+          volumeMounts:
+            - name: config-vol
+              mountPath: /tmp
+      volumes:
+        - name: config-vol
+          configMap:
+            name: log-output-cm

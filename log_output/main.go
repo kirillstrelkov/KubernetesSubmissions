@@ -48,7 +48,29 @@ func getCounter() string {
 	return fmt.Sprintf("%d", counter)
 }
 
+func printConfigValues() {
+	msg := os.Getenv("MESSAGE")
+
+	fs, err := os.Open("/tmp/information.txt")
+	if err != nil {
+		fmt.Printf("Error opening file: %v\n", err)
+		return
+	}
+	defer fs.Close()
+
+	content, err := io.ReadAll(fs)
+	if err != nil {
+		fmt.Printf("Error reading file: %v\n", err)
+		return
+	}
+
+	fmt.Printf("file content: %s", content)
+	fmt.Printf("env variable: MESSAGE=%s\n", msg)
+}
+
 func main() {
+	printConfigValues()
+
 	randomUUID = uuid.New().String()
 	fmt.Printf("Startup: Generated and stored UUID: %s\n", randomUUID)
 
