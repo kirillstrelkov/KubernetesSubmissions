@@ -23,8 +23,11 @@ spec:
             - name: todo-app-vol
               mountPath: /tmp
           env:
-            - name: POSTS_URL
-              value: "http://todo-backend-svc:8085/posts"
+            - name: PORT
+              value: "8080"
+          envFrom:
+            - configMapRef:
+                name: todo-app-cm
         - name: todo-backend-app
           image: todo-backend-app:latest
           imagePullPolicy: Never

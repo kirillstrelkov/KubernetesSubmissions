@@ -15,7 +15,7 @@ build:
 	go build
 
 run:
-	go run main.go
+	PORT=8089 POSTS_URL=http://localhost:8085/posts IMG_URL=https://picsum.photos/%d IMG_PATH=/tmp/image/image.jpg go run main.go
 
 docker-build:
 	docker build -t todo-app-app .

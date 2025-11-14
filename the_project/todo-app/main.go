@@ -9,16 +9,11 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 )
 
-const (
-	filesRoot     = "/tmp/image"
-	imageFileName = "image.jpg"
-)
-
 var isOldImage = false
-var urlPosts = "http://localhost:8080/posts"
 
 type Post struct {
 	Body string `json:"body"`
@@ -28,7 +23,54 @@ type TemplateData struct {
 	Posts []Post
 }
 
-func getPosts() []Post {
+type EnvVars struct {
+	Port     string
+	PostsURL string
+	ImgPath  string
+	ImgURL   string
+}
+
+type MyHandler struct {
+	Vars EnvVars
+}
+
+func NewHandler() *MyHandler {
+	var missing_vars []string
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		missing_vars = append(missing_vars, "PORT")
+	}
+
+	urlPosts := os.Getenv("POSTS_URL")
+	if urlPosts == "" {
+		missing_vars = append(missing_vars, "POSTS_URL")
+	}
+
+	imgPath := os.Getenv("IMG_PATH")
+	if imgPath == "" {
+		missing_vars = append(missing_vars, "IMG_PATH")
+	}
+
+	imgURL := os.Getenv("IMG_URL")
+	if imgURL == "" {
+		missing_vars = append(missing_vars, "IMG_URL")
+	}
+
+	if len(missing_vars) > 0 {
+		panic(fmt.Sprintf("Environment variables %v is not set", &missing_vars))
+	}
+
+	vars := EnvVars{
+		Port:     port,
+		PostsURL: urlPosts,
+		ImgPath:  imgPath,
+		ImgURL:   imgURL,
+	}
+	return &MyHandler{Vars: vars}
+}
+
+func getPosts(urlPosts string) []Post {
 	var posts []Post
 
 	fmt.Printf("Fetching... %s\n", urlPosts)
@@ -58,7 +100,16 @@ func getPosts() []Post {
 	return posts
 }
 
-func todoHandler(w http.ResponseWriter, r *http.Request) {
+func createImageFile(h *MyHandler) {
+	imgPath := h.Vars.ImgPath
+	if _, err := os.Stat(imgPath); err != nil {
+		h.fetchAndCacheImage()
+	} else {
+		fmt.Printf("Using cached image: %s\n", imgPath)
+	}
+}
+
+func (h *MyHandler) todoHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
@@ -73,7 +124,7 @@ func todoHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	tmpl := template.Must(template.ParseFiles("templates/index.html"))
-	posts := getPosts()
+	posts := getPosts(h.Vars.PostsURL)
 
 	data := TemplateData{
 		Posts: posts,
@@ -88,32 +139,19 @@ func todoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	if url := os.Getenv("POSTS_URL"); url != "" {
-		urlPosts = url
-	}
+	h := NewHandler()
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	createImageFile(h)
+
+	http.HandleFunc("/image", h.imageHandler)
+	http.HandleFunc("/", h.todoHandler)
+
+	addr := ":" + h.Vars.Port
+	fmt.Printf("Server started in port %s\n", h.Vars.Port)
 
 	go fetchInBackground()
-	imagePath := fmt.Sprintf("%s/%s", filesRoot, imageFileName)
-
-	if _, err := os.Stat(imagePath); err != nil {
-		fetchAndCacheImage()
-	} else {
-		fmt.Printf("Using cached image: %s\n", imagePath)
-	}
-
-	addr := ":" + port
-	fmt.Printf("Server started in port %s\n", port)
-
-	http.HandleFunc("/image", imageHandler)
-	http.HandleFunc("/", todoHandler)
 
 	log.Fatal(http.ListenAndServe(addr, nil))
-
 }
 
 func fetchInBackground() {
@@ -128,21 +166,19 @@ func fetchInBackground() {
 
 }
 
-func imageHandler(w http.ResponseWriter, r *http.Request) {
+func (h *MyHandler) imageHandler(w http.ResponseWriter, r *http.Request) {
 	if isOldImage {
-		go fetchAndCacheImage()
+		go h.fetchAndCacheImage()
 	}
 
-	imagePath := fmt.Sprintf("%s/%s", filesRoot, imageFileName)
-
-	http.ServeFile(w, r, imagePath)
+	http.ServeFile(w, r, h.Vars.ImgPath)
 }
 
-func fetchAndCacheImage() {
-	log.Println("Fetching new image from picsum.photos...")
+func (h *MyHandler) fetchAndCacheImage() {
+	log.Println("Fetching new image...")
 
 	id := rand.Intn(1000) + 1
-	url := fmt.Sprintf("https://picsum.photos/%d", id)
+	url := fmt.Sprintf(h.Vars.ImgURL, id)
 	log.Printf("Image URL: %s", url)
 
 	resp, err := http.Get(url)
@@ -152,13 +188,14 @@ func fetchAndCacheImage() {
 	}
 	defer resp.Body.Close()
 
-	err = os.MkdirAll(filesRoot, os.ModePerm)
+	imagePath := h.Vars.ImgPath
+	folder := filepath.Dir(imagePath)
+	err = os.MkdirAll(folder, os.ModePerm)
 	if err != nil {
 		log.Printf("Failed to create directory: %v", err)
 		return
 	}
 
-	imagePath := fmt.Sprintf("%s/%s", filesRoot, imageFileName)
 	out, err := os.Create(imagePath)
 	if err != nil {
 		log.Printf("Failed to create image file: %v", err)

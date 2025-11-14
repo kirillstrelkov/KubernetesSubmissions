@@ -67,6 +67,7 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
+		panic("Environmental variable PORT is not set")
 	}
 
 	addr := ":" + port
