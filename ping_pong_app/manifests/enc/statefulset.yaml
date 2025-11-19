@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: postgres-set
+    namespace: exercises
+spec:
+    selector:
+        matchLabels:
+            app: postgres
+    serviceName: postgres
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: postgres
+        spec:
+            containers:
+                - name: postgres
+                  image: postgres:13
+                  ports:
+                    - containerPort: 5432
+                      name: postgres
+                  env:
+                    - name: POSTGRES_USER
+                      value: ENC[AES256_GCM,data:UOrnpQud55M=,iv:D0f382DHpGWRNgtVRUX2B5iKEzUTHgsUztCLXma2tJM=,tag:qLA1cXsiWI03hpB+i68FJg==,type:str]
+                    - name: POSTGRES_PASSWORD
+                      value: ENC[AES256_GCM,data:quBNjrfoEkI=,iv:Qpm6XBA/hHSYuPoE+gbHscMP3he9bgaCVSDIDBJlBUU=,tag:OOsNmrJaHerx0DDmuVLBNA==,type:str]
+                    - name: POSTGRES_DB
+                      value: ENC[AES256_GCM,data:bILo50d/tOjxQQ==,iv:SOmUgTZuP160Jgs4/Vfung6ndjyNBuhi4h/zFa40Nfg=,tag:yMXxqESUP6hTCa+aEMB+mQ==,type:str]
+                  volumeMounts:
+                    - name: pgdata
+                      mountPath: /var/lib/postgresql/data
+    volumeClaimTemplates:
+        - metadata:
+            name: pgdata
+          spec:
+            accessModes:
+                - ReadWriteOnce
+            resources:
+                requests:
+                    storage: 1Gi
+sops:
+    age:
+        - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAybGhXRDJ5S2hwdDZXeHBN
+            MWR0aW9hd3FQTldaa3kwTnZuWGdiMFdOUkNFCkFZZlgrZXpHWGJGcTRsVEEzNEwx
+            Y3liYlVWTm14UnlsOU40R3UxWTNPTEkKLS0tIE12VXd4MlBiVGRZREdDWUoyRE5S
+            Nlc4ZE16QTJZam5SeEx3YVJIeVd6RFUKxo63lpQPN79WVf4jOU3d62LIJNnHgiLI
+            QT1R2Ir09b1g6OW36rYinT0CK91F6PsJPxaM880QN7QAdW2pBQr+Hw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-11-19T15:17:20Z"
+    mac: ENC[AES256_GCM,data:1EZ1gigTd0hkVIibaXYwYcGMi/qDysnskUEnGo2y4kxFDh4qapoK7ba406rPWf2x8IjVfnFIovt1LgACKQ+snN+nlPcyyRY5+ztX/mqmhrDd1lbtGcQyW1V6Dyzaenn7XXWyGFOEP4rW9shF+zUXlUxaJG7MB2Nzd7F5nz4+GWo=,iv:8UtEspvLPZljKky8FKum3XhZjv3RZdhy/OK2bysPVRc=,tag:o6EI0438kSizl/Z2HCOxoQ==,type:str]
+    encrypted_regex: (value)
+    version: 3.11.0
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: postgres
+    namespace: exercises
+spec:
+    selector:
+        app: postgres
+    ports:
+        - port: 5432
+          targetPort: 5432
+    type: ClusterIP
+sops:
+    age:
+        - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAybGhXRDJ5S2hwdDZXeHBN
+            MWR0aW9hd3FQTldaa3kwTnZuWGdiMFdOUkNFCkFZZlgrZXpHWGJGcTRsVEEzNEwx
+            Y3liYlVWTm14UnlsOU40R3UxWTNPTEkKLS0tIE12VXd4MlBiVGRZREdDWUoyRE5S
+            Nlc4ZE16QTJZam5SeEx3YVJIeVd6RFUKxo63lpQPN79WVf4jOU3d62LIJNnHgiLI
+            QT1R2Ir09b1g6OW36rYinT0CK91F6PsJPxaM880QN7QAdW2pBQr+Hw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-11-19T15:17:20Z"
+    mac: ENC[AES256_GCM,data:1EZ1gigTd0hkVIibaXYwYcGMi/qDysnskUEnGo2y4kxFDh4qapoK7ba406rPWf2x8IjVfnFIovt1LgACKQ+snN+nlPcyyRY5+ztX/mqmhrDd1lbtGcQyW1V6Dyzaenn7XXWyGFOEP4rW9shF+zUXlUxaJG7MB2Nzd7F5nz4+GWo=,iv:8UtEspvLPZljKky8FKum3XhZjv3RZdhy/OK2bysPVRc=,tag:o6EI0438kSizl/Z2HCOxoQ==,type:str]
+    encrypted_regex: (value)
+    version: 3.11.0

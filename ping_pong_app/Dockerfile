@@ -7,6 +7,8 @@ RUN go mod download
 
 COPY . .
 
+RUN go get
+
 RUN CGO_ENABLED=0 GOOS=linux go build -o /ping-pong-app
 
 FROM alpine:latest
