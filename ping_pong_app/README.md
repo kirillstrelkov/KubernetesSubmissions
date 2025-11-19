@@ -14,7 +14,7 @@ Replace `username` and `password` with proper values
 
 ## Work with encrypted yaml
 
-If new `key.txt` is created, `manifests/deployment.yaml` should be created from `manifests/enc/deployment.yaml` but with proper `value` for `DB_URL`
+If new `key.txt` is created, files from `manifests/enc/deployment.yaml` should recreated
 
 ```bash
 sops --encrypt \
