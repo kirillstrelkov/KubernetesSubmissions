@@ -10,6 +10,7 @@ fmt:
 lint:
 	go vet ./...
 	go run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run
+	golangci-lint run
 
 build:
 	go build

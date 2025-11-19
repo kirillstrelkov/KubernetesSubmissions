@@ -1,4 +1,4 @@
-all: deploy
+all: deploy k3d-apply-decrypt
 
 .PHONY: docker-build deploy
 
@@ -11,3 +11,11 @@ deploy: docker-build
 	k3d image import todo-app-app
 	k3d image import todo-backend-app
 	kubectl apply -f manifests
+
+k3d-apply-decrypt:
+	export SOPS_AGE_KEY_FILE=../key.txt; \
+	find ./manifests/enc -name '*.yaml' -exec sh -c 'sops --decrypt "{}" | kubectl apply -f -' \;
+
+decrypt:
+	export SOPS_AGE_KEY_FILE=../key.txt; \
+	sops --decrypt ./manifests/enc/secrets.yaml

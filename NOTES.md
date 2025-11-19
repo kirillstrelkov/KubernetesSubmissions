@@ -1,5 +1,11 @@
 # Notes
 
+## Reset k3d
+
+```bash
+make
+```
+
 ## Working with SOPS and age
 
 ### Create key with age
@@ -22,5 +28,6 @@ sops --encrypt \
 ### Use sops to decrypt file
 
 ```bash
-SOPS_AGE_KEY_FILE=key.txt sops --decrypt secret.enc.yaml | kubectl apply -f -
+export SOPS_AGE_KEY_FILE=key.txt
+sops --decrypt secret.enc.yaml | kubectl apply -f -
 ```
