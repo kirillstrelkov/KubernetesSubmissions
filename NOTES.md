@@ -19,15 +19,15 @@ gen-key
 ### Use sops to encrypt file
 
 ```bash
-sops --encrypt \
-       --age $(grep '# public key:' key.txt | cut -d ':' -f 2 | tr -d ' ')$ \
-       --encrypted-regex '^(data)$' \
-       secret.yaml > secret.enc.yaml
+export SOPS_AGE_PUB_KEY=$(grep '# public key:' key.txt | cut -d ':' -f 2 | tr -d ' ')
+sops --encrypt --age $SOPS_AGE_PUB_KEY --encrypted-regex '^(data)$' secret.yaml > secret.enc.yaml
 ```
+
+NOTE: choose proper regex `^(data)$` or `'(Data)$'`
 
 ### Use sops to decrypt file
 
 ```bash
-export SOPS_AGE_KEY_FILE=key.txt
-sops --decrypt secret.enc.yaml | kubectl apply -f -
+export SOPS_AGE_KEY_FILE=../key.txt
+sops --decrypt manifests/enc/secrets.yaml
 ```
