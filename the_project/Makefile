@@ -5,11 +5,13 @@ all: deploy k3d-apply-decrypt
 docker-build:
 	docker build -t todo-app-app ./todo-app
 	docker build -t todo-backend-app ./todo-backend
+	docker build -t create-post-run ./scripts/post
 
 deploy: docker-build
 	docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/todoapp
 	k3d image import todo-app-app
 	k3d image import todo-backend-app
+	k3d image import create-post-run
 	kubectl apply -f manifests
 
 k3d-apply-decrypt:
