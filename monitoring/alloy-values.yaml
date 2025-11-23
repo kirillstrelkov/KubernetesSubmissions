@@ -1,0 +1,27 @@
+alloy:
+  configMap:
+    content: |-
+      discovery.kubernetes "pods" {
+        role = "pod"
+      }
+
+      loki.source.kubernetes "pods" {
+        targets    = discovery.kubernetes.pods.targets
+        forward_to = [loki.write.default.receiver]
+      }
+
+      // Send logs to Loki
+      loki.write "default" {
+        endpoint {
+          url = "http://loki-gateway.loki-stack.svc.cluster.local/loki/api/v1/push"
+          headers = {
+            "X-Scope-OrgID" = "grafana",
+          }
+        }
+      }
+
+resources:
+  limits:
+    nofile: 65536
+  requests:
+    nofile: 65536

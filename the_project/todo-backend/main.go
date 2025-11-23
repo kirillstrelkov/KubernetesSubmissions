@@ -74,6 +74,13 @@ func (h *MyHandler) postsPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(body) > 140 {
+		log.Printf("Todo is too long: %d characters", len(body))
+		http.Error(w, "Bad request: 'body' cannot be longer than 140 characters", http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("Adding a new todo: %s", body)
 	_, err := h.Db.Exec("INSERT INTO posts (body) VALUES ($1)", body)
 	if err != nil {
 		log.Printf("Error inserting post into database: %v", err)

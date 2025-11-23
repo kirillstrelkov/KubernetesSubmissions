@@ -6,5 +6,8 @@ k3d-delete:
 k3d-start:
 	k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2
 
+k3d-stop:
+	k3d cluster stop
+
 gen-key:
 	[ ! -f "key.txt" ] && age-keygen -o key.txt
