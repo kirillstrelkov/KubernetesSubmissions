@@ -70,6 +70,9 @@ func main() {
 
 	http.HandleFunc("/pingpong", h.handler)
 	http.HandleFunc("/pings", h.handlerPings)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Alive!")
+	})
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
 

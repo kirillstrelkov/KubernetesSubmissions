@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ping-pong-dep
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ping-pong-app
+  template:
+    metadata:
+      labels:
+        app: ping-pong-app
+    spec:
+      containers:
+        - name: ping-pong-app
+          image: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/ping-pong-app:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: ENC[AES256_GCM,data:xUUSf38b1e087HUytAM7GrTiuBVK1nbuvaRSgi3DYdRngTwgo5Hw7cpTNlPw+6buP8p0ElzAjFwg5O+Peh4N0yY4Pkrmk5g=,iv:fjR42/Eb3mUwwNBrhATn1zeghJ4KR29a9g0eSlCMsvQ=,tag:qSV9tim0zCe3ZiwmhFQkOw==,type:str]
+sops:
+  age:
+    - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAyZ1pSYlVVOEdiZm5IUzky
+        NXNOeHlVTTFVYnBoM09SbnIveTU0UXVwK2c4CnVMYjltWG5WbXllT21xaUdtb3B6
+        YWxKdlZnTllRenpnRENCam5iMk9KN2MKLS0tIGxwOHllT2lRQVdDZWdhZ05NWENF
+        R1lCQ3pWUGRMVkZ0T2lLY2RaZ25GajAKJLDAIyGLwy75+zidzloCPVv0B5ZcvQT6
+        bD1kCLfTHlYdBjSmNRzTXnUhBNDMa60LO/TV2//XkBuFssPPRYz+ow==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-11-24T15:52:49Z"
+  mac: ENC[AES256_GCM,data:I1SR+cM9LqAxWzYIwmhegqHhNEXq7qFT1jby878DBA+BfkaTm58uObz8xbmeZRceDNsZaJiJrOFAAvrTrJJkxdEmDrplJsCvzd1PTSctyJVvDcW3q6htuWIOTFOZLABAGTeMWS3CcxPqvV/eR6IgrvOsZ7Six/GaEYNzMFIpge8=,iv:k8Ote40ZDTE9zp7OBHpFJDZ1CUsbFxecgRwcoBEaiQQ=,tag:eZKa4If1Vd8sVhUB0f14ZQ==,type:str]
+  encrypted_regex: (value)
+  version: 3.11.0

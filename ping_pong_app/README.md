@@ -7,6 +7,8 @@
 ## postgresql
 
 ```bash
+# run postgresql container
+docker run --name some-postgres -e POSTGRES_USER=<username> -e POSTGRES_PASSWORD=<password> -e POSTGRES_DB=pingpongdb -d postgres
 DB_URL=postgresql://<username>:<password>@172.17.0.2:5432/pingpongdb?sslmode=disable
 ```
 
@@ -22,3 +24,10 @@ sops --encrypt \
 	--encrypted-regex '(value)' \
 	./manifests/deployment.yaml > ./manifests/enc/deployment.yaml
 ```
+
+## Deploy to Kubernetes
+
+Check gke/README.md.
+
+1. Build images and deploy to GKE `make docker-build`
+2. Use `make gke` to apply all manifests
