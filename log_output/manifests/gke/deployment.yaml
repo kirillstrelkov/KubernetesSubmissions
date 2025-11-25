@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output-dep
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output-app
+  template:
+    metadata:
+      labels:
+        app: log-output-app
+    spec:
+      containers:
+        - name: log-output-app
+          image: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/log-output-app:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PING_PONG_SERVICE
+              value: ping-pong-svc:3456
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: log-output-cm
+                  key: MESSAGE
+          volumeMounts:
+            - name: config-vol
+              mountPath: /tmp
+      volumes:
+        - name: config-vol
+          configMap:
+            name: log-output-cm

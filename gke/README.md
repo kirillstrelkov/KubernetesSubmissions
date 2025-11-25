@@ -8,7 +8,7 @@ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-ve
 
 ```bash
 # env variables
-export PROJECT_ID=<add project id>
+export PROJECT_ID=dwk-gke-479211
 export REGION=europe-north1
 export DOCKER_PKG_DEV=$REGION-docker.pkg.dev
 export DOCKER_REPO=my-docker-repo
