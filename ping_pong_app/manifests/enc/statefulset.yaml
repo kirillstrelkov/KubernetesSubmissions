@@ -22,14 +22,15 @@ spec:
                       name: postgres
                   env:
                     - name: POSTGRES_USER
-                      value: ENC[AES256_GCM,data:UOrnpQud55M=,iv:D0f382DHpGWRNgtVRUX2B5iKEzUTHgsUztCLXma2tJM=,tag:qLA1cXsiWI03hpB+i68FJg==,type:str]
+                      value: ENC[AES256_GCM,data:CRKZ39dWtn8=,iv:x/ewMU1xWvoUs3ztZJam+/LY7GOIzrDdmGFsgFpyRpA=,tag:8Q6pT/0HHblrJFZq9sTuOw==,type:str]
                     - name: POSTGRES_PASSWORD
-                      value: ENC[AES256_GCM,data:quBNjrfoEkI=,iv:Qpm6XBA/hHSYuPoE+gbHscMP3he9bgaCVSDIDBJlBUU=,tag:OOsNmrJaHerx0DDmuVLBNA==,type:str]
+                      value: ENC[AES256_GCM,data:MVsxcVfKw4Q=,iv:q3dkkINz+2wvpwRkkid5LO5DfIRoQkSJKhJDReiDwE4=,tag:gdfkk3amYZ7hj6FqbTLnfQ==,type:str]
                     - name: POSTGRES_DB
-                      value: ENC[AES256_GCM,data:bILo50d/tOjxQQ==,iv:SOmUgTZuP160Jgs4/Vfung6ndjyNBuhi4h/zFa40Nfg=,tag:yMXxqESUP6hTCa+aEMB+mQ==,type:str]
+                      value: ENC[AES256_GCM,data:E2oI1qgXbaVX3A==,iv:ouZ8Z9g9Eq8/z97vJvZL1itJa4qfxJBwQx0hVmtnhds=,tag:n7sMK9tE694SIT/PwuK2nw==,type:str]
                   volumeMounts:
                     - name: pgdata
                       mountPath: /var/lib/postgresql/data
+                      subPath: postgres
     volumeClaimTemplates:
         - metadata:
             name: pgdata
@@ -44,14 +45,14 @@ sops:
         - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAybGhXRDJ5S2hwdDZXeHBN
-            MWR0aW9hd3FQTldaa3kwTnZuWGdiMFdOUkNFCkFZZlgrZXpHWGJGcTRsVEEzNEwx
-            Y3liYlVWTm14UnlsOU40R3UxWTNPTEkKLS0tIE12VXd4MlBiVGRZREdDWUoyRE5S
-            Nlc4ZE16QTJZam5SeEx3YVJIeVd6RFUKxo63lpQPN79WVf4jOU3d62LIJNnHgiLI
-            QT1R2Ir09b1g6OW36rYinT0CK91F6PsJPxaM880QN7QAdW2pBQr+Hw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNQ1E1TUhMT3hiY1VVNXJN
+            OForajZjQzVWcnlsenpPakhFY25qekNPMkhNCkY1M2puUUNRQXROSGtubzNmSWVz
+            OXVZNDVWNkcrbCtYNWNFdWJ0bTFFMUkKLS0tIFlUMnhTNG9VbTBwUFlYYlRMUjZx
+            NnZOZFNzSi8yNFRyZjhJQWJOTjJqdEEKvdmKQbxI+uqLA29b86kjo9vXuaePS/ny
+            aSlzTB7IaRb8ZDr5lCEml/2PB/VZ002gTop8wQ/KOlbdorNGHPAQ0g==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-19T15:17:20Z"
-    mac: ENC[AES256_GCM,data:1EZ1gigTd0hkVIibaXYwYcGMi/qDysnskUEnGo2y4kxFDh4qapoK7ba406rPWf2x8IjVfnFIovt1LgACKQ+snN+nlPcyyRY5+ztX/mqmhrDd1lbtGcQyW1V6Dyzaenn7XXWyGFOEP4rW9shF+zUXlUxaJG7MB2Nzd7F5nz4+GWo=,iv:8UtEspvLPZljKky8FKum3XhZjv3RZdhy/OK2bysPVRc=,tag:o6EI0438kSizl/Z2HCOxoQ==,type:str]
+    lastmodified: "2025-11-25T20:56:15Z"
+    mac: ENC[AES256_GCM,data:jm0085Lom4ZsU6FfzpLISZSUlHXKeRRk7fsIZ9rxvYOpDJnK2Pgde1sYGxTp4Jxde34AHYoTdh0Wk8FAGXt8w6+cR2S05Z3BgIk7SlnqA0L3YSToKym20Zeo8XSsEADUQSGGYOnSXOJz92ydjcuUmqwkXDcSNvcbkqiFuiXvKIk=,iv:oQtitPwCOP2vS5BIeM3sofjxdyOqJQu7JsVWT5eoKxA=,tag:6cF1djDTXpt21g0kh0/YcQ==,type:str]
     encrypted_regex: (value)
     version: 3.11.0
 ---
@@ -72,13 +73,13 @@ sops:
         - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAybGhXRDJ5S2hwdDZXeHBN
-            MWR0aW9hd3FQTldaa3kwTnZuWGdiMFdOUkNFCkFZZlgrZXpHWGJGcTRsVEEzNEwx
-            Y3liYlVWTm14UnlsOU40R3UxWTNPTEkKLS0tIE12VXd4MlBiVGRZREdDWUoyRE5S
-            Nlc4ZE16QTJZam5SeEx3YVJIeVd6RFUKxo63lpQPN79WVf4jOU3d62LIJNnHgiLI
-            QT1R2Ir09b1g6OW36rYinT0CK91F6PsJPxaM880QN7QAdW2pBQr+Hw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNQ1E1TUhMT3hiY1VVNXJN
+            OForajZjQzVWcnlsenpPakhFY25qekNPMkhNCkY1M2puUUNRQXROSGtubzNmSWVz
+            OXVZNDVWNkcrbCtYNWNFdWJ0bTFFMUkKLS0tIFlUMnhTNG9VbTBwUFlYYlRMUjZx
+            NnZOZFNzSi8yNFRyZjhJQWJOTjJqdEEKvdmKQbxI+uqLA29b86kjo9vXuaePS/ny
+            aSlzTB7IaRb8ZDr5lCEml/2PB/VZ002gTop8wQ/KOlbdorNGHPAQ0g==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-19T15:17:20Z"
-    mac: ENC[AES256_GCM,data:1EZ1gigTd0hkVIibaXYwYcGMi/qDysnskUEnGo2y4kxFDh4qapoK7ba406rPWf2x8IjVfnFIovt1LgACKQ+snN+nlPcyyRY5+ztX/mqmhrDd1lbtGcQyW1V6Dyzaenn7XXWyGFOEP4rW9shF+zUXlUxaJG7MB2Nzd7F5nz4+GWo=,iv:8UtEspvLPZljKky8FKum3XhZjv3RZdhy/OK2bysPVRc=,tag:o6EI0438kSizl/Z2HCOxoQ==,type:str]
+    lastmodified: "2025-11-25T20:56:15Z"
+    mac: ENC[AES256_GCM,data:jm0085Lom4ZsU6FfzpLISZSUlHXKeRRk7fsIZ9rxvYOpDJnK2Pgde1sYGxTp4Jxde34AHYoTdh0Wk8FAGXt8w6+cR2S05Z3BgIk7SlnqA0L3YSToKym20Zeo8XSsEADUQSGGYOnSXOJz92ydjcuUmqwkXDcSNvcbkqiFuiXvKIk=,iv:oQtitPwCOP2vS5BIeM3sofjxdyOqJQu7JsVWT5eoKxA=,tag:6cF1djDTXpt21g0kh0/YcQ==,type:str]
     encrypted_regex: (value)
     version: 3.11.0

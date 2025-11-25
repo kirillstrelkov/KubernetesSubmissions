@@ -33,11 +33,15 @@ k3d-apply:
 gke:
 	echo "NOTE: ping_pong_app should be deployed"
 
+# 	remove old resources if exist
 	kubectl delete -f manifests/ingress.yaml || true
 	kubectl delete -f ../ping_pong_app/manifests/ingress.yaml || true
 	kubectl delete -n exercises ingress log-output-pingpong-ingress || true
 	
-	kubectl apply -f manifests/configmap.yaml
 	kubectl apply -f manifests/namespace.yaml
+	kubectl apply -f manifests/configmap.yaml
 	kubectl apply -f manifests/service.yaml
 	kubectl apply -f manifests/gke/
+
+clean:
+	kubectl delete namespace exercises || true

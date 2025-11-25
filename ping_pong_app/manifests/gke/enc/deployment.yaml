@@ -15,25 +15,25 @@ spec:
     spec:
       containers:
         - name: ping-pong-app
-          image: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/ping-pong-app:v2
+          image: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/ping-pong-app:v3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
             - name: DB_URL
-              value: ENC[AES256_GCM,data:xUUSf38b1e087HUytAM7GrTiuBVK1nbuvaRSgi3DYdRngTwgo5Hw7cpTNlPw+6buP8p0ElzAjFwg5O+Peh4N0yY4Pkrmk5g=,iv:fjR42/Eb3mUwwNBrhATn1zeghJ4KR29a9g0eSlCMsvQ=,tag:qSV9tim0zCe3ZiwmhFQkOw==,type:str]
+              value: ENC[AES256_GCM,data:98/B2GQrjEbHznx1GVNqBc6okN0EeZ653nZCfCQFPfkjpdjVE9g3SZhg/36ylgo14Bhiwa2W1wYSnPFzggRMjx3CKepsP8M=,iv:0lPhUDc+S5CnNagu1VfeiVOR+VkLWiW9/Acsw4Nm2aI=,tag:CTuquqAG8w8i9h34tnainw==,type:str]
 sops:
   age:
     - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAyZ1pSYlVVOEdiZm5IUzky
-        NXNOeHlVTTFVYnBoM09SbnIveTU0UXVwK2c4CnVMYjltWG5WbXllT21xaUdtb3B6
-        YWxKdlZnTllRenpnRENCam5iMk9KN2MKLS0tIGxwOHllT2lRQVdDZWdhZ05NWENF
-        R1lCQ3pWUGRMVkZ0T2lLY2RaZ25GajAKJLDAIyGLwy75+zidzloCPVv0B5ZcvQT6
-        bD1kCLfTHlYdBjSmNRzTXnUhBNDMa60LO/TV2//XkBuFssPPRYz+ow==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwdm5xQyt2K1hQWTY0OW5a
+        T0dPeFhLanl1S085NmhRM0MvTWZ4dittd2x3CmNoeCswdkRGMkVaQUFZTGlEelln
+        OTdvb04zK3FvQWdaWXhrbGJXaThCMzgKLS0tIHRlZlU2NlRmQlNoZzNoMUd6YTN5
+        YUpFNGRUcGFhdWQ1ekVaVGZtMWhWOE0KILMJFccZ78YyQ9+/7VrmqpIBPhZvYbcV
+        kWYnsJNFr3FIiCoG7x6HJSpy0kmYZui43u9bSKRPAX6bQioqttfBcA==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2025-11-24T15:52:49Z"
-  mac: ENC[AES256_GCM,data:I1SR+cM9LqAxWzYIwmhegqHhNEXq7qFT1jby878DBA+BfkaTm58uObz8xbmeZRceDNsZaJiJrOFAAvrTrJJkxdEmDrplJsCvzd1PTSctyJVvDcW3q6htuWIOTFOZLABAGTeMWS3CcxPqvV/eR6IgrvOsZ7Six/GaEYNzMFIpge8=,iv:k8Ote40ZDTE9zp7OBHpFJDZ1CUsbFxecgRwcoBEaiQQ=,tag:eZKa4If1Vd8sVhUB0f14ZQ==,type:str]
+  lastmodified: "2025-11-25T20:56:15Z"
+  mac: ENC[AES256_GCM,data:XoEJS3ngRu1NPoU5ZMW1yqR6TKmZuonv4R6qtfXeIFw0EmPkmj9no4tAZWKmgqZ1urjdANAwKaR0b1o1SGc9BmeJiFWNKsNdB7qNbGL1gKfMkTjEdibH8XwNNDW2rlI3KI32YLFtkpZZht8SzjNj7vDIZ7KS0yPz+rUsSdbRVJM=,iv:QzkO6mSbkd4aAVUeZYpfUP5kKGjU5dY9qqUd5z9/z2c=,tag:MyraEObKtXeDyw542tk8CA==,type:str]
   encrypted_regex: (value)
   version: 3.11.0

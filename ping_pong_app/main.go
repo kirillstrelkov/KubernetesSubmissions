@@ -68,11 +68,8 @@ func main() {
 
 	fmt.Printf("Server started in port %s\n", port)
 
-	http.HandleFunc("/pingpong", h.handler)
 	http.HandleFunc("/pings", h.handlerPings)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Alive!")
-	})
+	http.HandleFunc("/", h.handler)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
