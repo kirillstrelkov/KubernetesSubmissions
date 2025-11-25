@@ -35,6 +35,7 @@ gke:
 
 	kubectl delete -f manifests/ingress.yaml || true
 	kubectl delete -f ../ping_pong_app/manifests/ingress.yaml || true
+	kubectl delete -n exercises ingress log-output-pingpong-ingress || true
 	
 	kubectl apply -f manifests/configmap.yaml
 	kubectl apply -f manifests/namespace.yaml
