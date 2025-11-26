@@ -1,0 +1,18 @@
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: todo-backend-health
+  namespace: project
+spec:
+  default:
+    checkIntervalSec: 10
+    timeoutSec: 5
+    config:
+      type: HTTP
+      httpHealthCheck:
+        requestPath: /posts
+        port: 8085
+  targetRef:
+    group: ""
+    kind: Service
+    name: todo-backend-svc

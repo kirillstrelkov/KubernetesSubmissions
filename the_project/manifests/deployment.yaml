@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: todo-app-app
-          image: todo-app-app:latest
-          imagePullPolicy: Never
+          image: TODO_APP_APP
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           volumeMounts:
@@ -29,8 +29,8 @@ spec:
             - configMapRef:
                 name: todo-app-cm
         - name: todo-backend-app
-          image: todo-backend-app:latest
-          imagePullPolicy: Never
+          image: TODO_BACKEND_APP
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8085
           env:

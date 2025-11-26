@@ -11,8 +11,8 @@ spec:
         spec:
           containers:
             - name: create-post-container
-              image: create-post-run:latest
-              imagePullPolicy: Never
+              image: CREATE_POST_RUN
+              imagePullPolicy: IfNotPresent
               env:
                 - name: URL
                   valueFrom:

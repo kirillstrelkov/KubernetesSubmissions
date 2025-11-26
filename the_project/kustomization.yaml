@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+  - name: TODO_APP_APP
+    newName: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/todo-app-app
+    newTag: v1
+  - name: TODO_BACKEND_APP
+    newName: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/todo-backend-app
+    newTag: v1
+  - name: CREATE_POST_RUN
+    newName: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/create-post-run
+    newTag: v1
+resources:
+  - manifests/configmap.yaml
+  - manifests/cronjob.yaml
+  - manifests/deployment.yaml
+  - manifests/dec/secrets.yaml
+  - manifests/gke/gateway.yaml
+  - manifests/gke/health-check.yaml
+  - manifests/namespace.yaml
+  - manifests/persistent-volume-claim.yaml
+  - manifests/persistent-volume.yaml
+  - manifests/service.yaml
+  - manifests/service_backend.yaml
+  - manifests/statefulset.yaml
+  - manifests/storageclass.yaml
