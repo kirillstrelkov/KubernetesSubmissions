@@ -17,7 +17,6 @@ resources:
   - manifests/dec/secrets.yaml
   - manifests/gke/gateway.yaml
   - manifests/gke/health-check.yaml
-  - manifests/namespace.yaml
   - manifests/persistent-volume-claim.yaml
   - manifests/persistent-volume.yaml
   - manifests/service.yaml

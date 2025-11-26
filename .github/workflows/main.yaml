@@ -80,10 +80,22 @@ jobs:
 
       - name: Deploy
         run: |-
+          if [ "$BRANCH" == "main" ]; then
+            NAMESPACE="project"
+          else
+            NAMESPACE="${GITHUB_REF#refs/heads/}"
+          fi
+
+          echo "Deploying branch '$BRANCH' to namespace '$NAMESPACE'"
+
           cd the_project
           kustomize edit set image TODO_APP_APP=$IMG_TODO_APP_APP
           kustomize edit set image TODO_BACKEND_APP=$IMG_TODO_BACKEND_APP
           kustomize edit set image CREATE_POST_RUN=$IMG_CREATE_POST_RUN
+
+          kubectl create namespace ${NAMESPACE} || true
+          kubectl config set-context --current --namespace=${NAMESPACE}
+          kustomize edit set namespace ${NAMESPACE}
 
           kustomize build . | kubectl apply -f -
           kubectl rollout status deployment -n project todo-app-dep
