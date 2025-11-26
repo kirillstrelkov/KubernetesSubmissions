@@ -83,7 +83,9 @@ jobs:
           if [ "$BRANCH" == "main" ]; then
             NAMESPACE="project"
           else
-            NAMESPACE="${GITHUB_REF#refs/heads/}"
+            NAMESPACE=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
+            NAMESPACE=${NAMESPACE#refs-tags-}
+            NAMESPACE=${NAMESPACE#refs-heads-}
           fi
 
           echo "Deploying branch '$BRANCH' to namespace '$NAMESPACE'"
