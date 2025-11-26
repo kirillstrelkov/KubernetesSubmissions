@@ -18,7 +18,6 @@ resources:
   - manifests/gke/gateway.yaml
   - manifests/gke/health-check.yaml
   - manifests/persistent-volume-claim.yaml
-  - manifests/persistent-volume.yaml
   - manifests/service.yaml
   - manifests/service_backend.yaml
   - manifests/statefulset.yaml
