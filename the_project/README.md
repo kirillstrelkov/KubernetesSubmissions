@@ -25,3 +25,10 @@ sops --encrypt \
 	--encrypted-regex '(Data)$' \
 	./manifests/secrets.yaml > ./manifests/enc/secrets.yaml
 ```
+
+## Deploy to Kubernetes
+
+Check gke/README.md.
+
+1. Build images and deploy to GKE `make docker-build`
+2. Use `make gke` to apply all manifests

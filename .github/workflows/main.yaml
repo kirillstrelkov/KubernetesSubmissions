@@ -1,0 +1,90 @@
+name: Release application
+
+on:
+  push:
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  REGISTRY: europe-north1-docker.pkg.dev
+  REPOSITORY: my-docker-repo
+  BRANCH: ${{ github.ref_name }}
+
+jobs:
+  build-publish-deploy:
+    name: Build, Publish and Deploy
+    runs-on: ubuntu-latest
+    environment: test-env
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.GKE_SA_KEY }}"
+
+      - name: "Set up Cloud SDK"
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: "Use gcloud CLI"
+        run: gcloud info
+
+      - run: gcloud auth configure-docker $REGISTRY --quiet
+
+      - name: "Get GKE credentials"
+        uses: "google-github-actions/get-gke-credentials@v2"
+        with:
+          cluster_name: "${{ env.GKE_CLUSTER }}"
+          project_id: "${{ env.PROJECT_ID }}"
+          location: "${{ env.GKE_ZONE }}"
+
+      - name: "Form the image name"
+        run: |-
+          echo "IMG_TODO_APP_APP=$REGISTRY/$PROJECT_ID/$REPOSITORY/todo-app-app:$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
+          echo "IMG_TODO_BACKEND_APP=$REGISTRY/$PROJECT_ID/$REPOSITORY/todo-backend-app:$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
+          echo "IMG_CREATE_POST_RUN=$REGISTRY/$PROJECT_ID/$REPOSITORY/create-post-run:$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
+
+      - name: Build and publish todo-app-dep
+        run: |-
+          docker build --tag $IMG_TODO_APP_APP ./the_project/todo-app
+          docker push $IMG_TODO_APP_APP
+
+      - name: Build and publish todo-backend-app
+        run: |-
+          docker build --tag $IMG_TODO_BACKEND_APP ./the_project/todo-backend
+          docker push $IMG_TODO_BACKEND_APP
+
+      - name: Build and publish create-post-run
+        run: |-
+          docker build --tag $IMG_CREATE_POST_RUN ./the_project/scripts/post
+          docker push $IMG_CREATE_POST_RUN
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Install SOPS
+        run: |
+          curl -LO https://github.com/getsops/sops/releases/download/v3.9.0/sops-v3.9.0.linux.amd64
+          sudo mv sops-v3.9.0.linux.amd64 /usr/local/bin/sops
+          sudo chmod +x /usr/local/bin/sops
+
+      - name: Decrypt Secrets
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: |
+          cd the_project
+          mkdir -p manifests/dec
+          sops --decrypt manifests/enc/secrets.yaml > manifests/dec/secrets.yaml
+
+      - name: Deploy
+        run: |-
+          cd the_project
+          kustomize edit set image TODO_APP_APP=$IMG_TODO_APP_APP
+          kustomize edit set image TODO_BACKEND_APP=$IMG_TODO_BACKEND_APP
+          kustomize edit set image CREATE_POST_RUN=$IMG_CREATE_POST_RUN
+
+          kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment -n project todo-app-dep
+          kubectl get services -n project -o wide
