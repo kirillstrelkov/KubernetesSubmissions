@@ -41,7 +41,7 @@ sops --encrypt \
 	./manifests/secrets.yaml > ./manifests/enc/secrets.yaml
 ```
 
-## Deploy to Kubernetes
+## Deploy to GKE
 
 Check gke/README.md.
 
@@ -55,3 +55,16 @@ NOTE: `pg-backup` image should be push manually, check `./Makefile`
 ```bash
 kubectl create secret generic google-service-account-key --from-file=<path to json key file>
 ```
+
+### View logs in GKE
+
+Open `Logs explorer` and use query:
+
+```
+resource.type="k8s_container"
+resource.labels.cluster_name="dwk-cluster"
+resource.labels.namespace_name="project"
+```
+
+Example:
+![alt text](./docs/gke_logs.png "Title")
