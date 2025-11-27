@@ -47,3 +47,11 @@ Check gke/README.md.
 
 1. Build images and deploy to GKE `make docker-build`
 2. Use `make gke` to apply all manifests
+
+NOTE: `pg-backup` image should be push manually, check `./Makefile`
+
+`google-service-account-key` secret should be available in cluster:
+
+```bash
+kubectl create secret generic google-service-account-key --from-file=<path to json key file>
+```

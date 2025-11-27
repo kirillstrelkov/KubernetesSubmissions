@@ -15,6 +15,10 @@ docker-build:
 	docker build -t $$DOCKER_FULL_REPO/create-post-run:v1 ./scripts/post
 	docker push $$DOCKER_FULL_REPO/create-post-run:v1
 
+	docker build -t pg-backup ./scripts/pg-backup
+	docker build -t $$DOCKER_FULL_REPO/pg-backup:v2 ./scripts/pg-backup
+	docker push $$DOCKER_FULL_REPO/pg-backup:v2
+
 deploy: docker-build
 	docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/todoapp
 	k3d image import todo-app-app

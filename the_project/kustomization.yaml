@@ -10,6 +10,9 @@ images:
   - name: CREATE_POST_RUN
     newName: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/create-post-run
     newTag: v1
+  - name: PG_BACKUP_IMAGE
+    newName: europe-north1-docker.pkg.dev/dwk-gke-479211/my-docker-repo/pg-backup
+    newTag: v2
 resources:
   - manifests/configmap.yaml
   - manifests/cronjob.yaml
@@ -17,6 +20,7 @@ resources:
   - manifests/dec/secrets.yaml
   - manifests/gke/gateway.yaml
   - manifests/gke/health-check.yaml
+  - manifests/gke/backup-cronjob.yaml
   - manifests/persistent-volume-claim.yaml
   - manifests/service.yaml
   - manifests/service_backend.yaml
