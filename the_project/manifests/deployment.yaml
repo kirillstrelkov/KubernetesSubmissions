@@ -30,6 +30,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: todo-app-cm
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
         - name: todo-backend-app
           image: TODO_BACKEND_APP
           imagePullPolicy: IfNotPresent
@@ -43,6 +50,13 @@ spec:
                 secretKeyRef:
                   name: project-secret
                   key: DB_URL
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
       volumes:
         - name: todo-app-vol
           persistentVolumeClaim:
