@@ -1,5 +1,20 @@
 # Todo app
 
+## DBaaS vs DIY
+
+| feature       | DBaaS                                                                                                   | DIY                                                                                                                                                                                               |
+| ------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| work required | Most of work is done by provider.                                                                       | Everything(db installation, network setup, db configuration) should be done manually with Compute instances                                                                                       |
+| costs         | DBaaS usufally higher then compute.                                                                     | Compute is cheaper DBaaS but hours should be spent for initial setup and constant maintenance.                                                                                                    |
+| backup        | Simple configuration via provider. Backups might increase costs for storage.                            | Whole back up setup should be done manually. Backup storage is cheaper then DBaaS but all maintenance should be done manually.                                                                    |
+| maintenance   | Patching and updates done automatically by provider. Scaling, monitoring is easy and done via provider. | Patching and updates should be done manually. Horizontal and vertical scaling might require new servers or new architecture. Monitoring is done by internal team and it should be 24/7 available. |
+| ease of use   | Most of thing can be done via provider's web UI.                                                        | Big work should be spent on infrastucture setup, implementation and maintenance.                                                                                                                  |
+| security      | Cloud provider can have advisor and quick check to improve secutiry                                     | Security should be taken in account from the start for everything db access, secure networking and backups.                                                                                       |
+
+DBaaS - use when there is no dedicated team/capacity to own infrastucture and ideal starting point for startups/prototyping.
+
+DIY - use in production when there is enough resources to full own database configuration
+
 ## Deploy to k3d cluster
 
 1. Build, import and deploy `make`
