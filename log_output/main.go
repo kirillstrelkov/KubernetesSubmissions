@@ -16,7 +16,7 @@ var randomUUID string
 
 const iso8601Format = "2006-01-02T15:04:05.000Z"
 
-func getCounter() string {
+func getCounter() (string, error) {
 	svc := os.Getenv("PING_PONG_SERVICE")
 	if svc == "" {
 		svc = "localhost:8080"
@@ -25,27 +25,27 @@ func getCounter() string {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return fmt.Sprintf("Error making request: %v", err)
+		return "", fmt.Errorf("error making request: %v", err)
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Sprintf("Received non-OK status code: %d", resp.StatusCode)
+		return "", fmt.Errorf("received non-OK status code: %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Sprintf("Error reading response body: %v", err)
+		return "", fmt.Errorf("error reading response body: %v", err)
 	}
 
 	counter, err := strconv.Atoi(string(body))
 
 	if err != nil {
-		return fmt.Sprintf("Error reading response body: %v", err)
+		return "", fmt.Errorf("error reading response body: %v", err)
 	}
 
-	return fmt.Sprintf("%d", counter)
+	return fmt.Sprintf("%d", counter), nil
 }
 
 func printConfigValues() {
@@ -81,11 +81,24 @@ func main() {
 	addr := ":" + port
 
 	http.HandleFunc("/", statusHandler)
+	http.HandleFunc("/healthz", statusAlive)
 
 	fmt.Printf("HTTP server starting on port %s\n", port)
 	if err := http.ListenAndServe(addr, nil); err != nil {
 		log.Fatalf("HTTP server failed: %v", err)
 	}
+}
+
+func statusAlive(w http.ResponseWriter, r *http.Request) {
+	if _, err := getCounter(); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "service is not running: %s\n", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Printf("Alive\n")
 }
 
 func statusHandler(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +119,7 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 	timestamp := nowUTC.Format(iso8601Format)
 
 	line := fmt.Sprintf("%s: %s\n", timestamp, randomUUID)
-	counter := getCounter()
+	counter, _ := getCounter()
 	// print
 	fmt.Print(line)
 	fmt.Printf("Ping / Pongs: %s\n", counter)

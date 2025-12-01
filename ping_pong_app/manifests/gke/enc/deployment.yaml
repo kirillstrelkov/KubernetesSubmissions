@@ -21,19 +21,25 @@ spec:
             - containerPort: 8080
           env:
             - name: DB_URL
-              value: ENC[AES256_GCM,data:98/B2GQrjEbHznx1GVNqBc6okN0EeZ653nZCfCQFPfkjpdjVE9g3SZhg/36ylgo14Bhiwa2W1wYSnPFzggRMjx3CKepsP8M=,iv:0lPhUDc+S5CnNagu1VfeiVOR+VkLWiW9/Acsw4Nm2aI=,tag:CTuquqAG8w8i9h34tnainw==,type:str]
+              value: ENC[AES256_GCM,data:zkQZF6X8FscsjMATdkU5G5Ui5bw79I5YuHIAgcwMoHzZXURKEyPJxKvhKNfqmp2fopjT7kwl79db57NR0s/nT4maIUcuY0Q=,iv:DyYDWM7Qmt4GO3XSXHOaqIm012Xkg9Yyhx3X3ueQZBc=,tag:U5WspslDiLRB52QooOE6OA==,type:str]
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            httpGet:
+              path: /healthz
+              port: 8080
 sops:
   age:
     - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwdm5xQyt2K1hQWTY0OW5a
-        T0dPeFhLanl1S085NmhRM0MvTWZ4dittd2x3CmNoeCswdkRGMkVaQUFZTGlEelln
-        OTdvb04zK3FvQWdaWXhrbGJXaThCMzgKLS0tIHRlZlU2NlRmQlNoZzNoMUd6YTN5
-        YUpFNGRUcGFhdWQ1ekVaVGZtMWhWOE0KILMJFccZ78YyQ9+/7VrmqpIBPhZvYbcV
-        kWYnsJNFr3FIiCoG7x6HJSpy0kmYZui43u9bSKRPAX6bQioqttfBcA==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3NzMwWUhKKzVFbDZOSC9p
+        N3JKSmh0cUtNZTlZSlMxK3VsNVYrMURNajN3CisxT3FGSVZKaFNiQkRPVmV1RXUr
+        WWpVSjlSYm1qR2JxUURWVWN2eS9TMU0KLS0tIEFqcms3dUNZSVFrYnhELzdsOTBo
+        MWNoR1FET0lvMncyYlowUUh0MEYzd28KDbNRWYftozZ42/bE21ZIEMJQ9MTlRYqc
+        J2/twTzzJwduq/5n45PjT8JR96KQ7upuvC15OmxSYJ+ChVDHN+yctg==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2025-11-25T20:56:15Z"
-  mac: ENC[AES256_GCM,data:XoEJS3ngRu1NPoU5ZMW1yqR6TKmZuonv4R6qtfXeIFw0EmPkmj9no4tAZWKmgqZ1urjdANAwKaR0b1o1SGc9BmeJiFWNKsNdB7qNbGL1gKfMkTjEdibH8XwNNDW2rlI3KI32YLFtkpZZht8SzjNj7vDIZ7KS0yPz+rUsSdbRVJM=,iv:QzkO6mSbkd4aAVUeZYpfUP5kKGjU5dY9qqUd5z9/z2c=,tag:MyraEObKtXeDyw542tk8CA==,type:str]
+  lastmodified: "2025-12-01T16:32:37Z"
+  mac: ENC[AES256_GCM,data:k7pdUix7FrJFXzIEQP44Hb5nTj/b6NA3c4QWEGZB0pujasJ9rNEPRW+N8BM7/SYGwYPIUMzQz+DkKaGUaQES94kP2/vEZd+/yP46pBCyTmaYdCQMg5MJSNhy+2oNWlG62k9cAN0JcSD41scDdSQnVQ/WbO1DfUFpU/1djvbtSFA=,iv:YjmTrAFESEDYhCpDpEQ0bY2JFG6tnYs4a7tSVFIPuDs=,tag:PJhHYXAPPuy0F5J3NafKmQ==,type:str]
   encrypted_regex: (value)
   version: 3.11.0

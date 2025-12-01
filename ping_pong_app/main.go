@@ -6,12 +6,15 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
+	"time"
 
 	_ "github.com/lib/pq"
 )
 
 type MyHandler struct {
-	Db *sql.DB
+	Db   *sql.DB
+	dbMu sync.RWMutex
 }
 
 func (h *MyHandler) handler(w http.ResponseWriter, r *http.Request) {
@@ -41,9 +44,21 @@ func (h *MyHandler) handlerPings(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get counter", http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "%d", count)
+}
+
+func (h *MyHandler) handlerAlive(w http.ResponseWriter, r *http.Request) {
+	if h.Db == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, "database not connected\n")
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "alive\n")
 }
 
 func main() {
@@ -52,17 +67,38 @@ func main() {
 		port = "8080"
 	}
 
-	db, err := connectToDB()
-	if err != nil {
-		log.Fatalf("Failed to connect to DB: %v", err)
-	}
-	h := &MyHandler{Db: db}
-	defer h.Db.Close()
+	h := &MyHandler{Db: nil}
 
-	err = initDatabase(h.Db)
-	if err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
-	}
+	go func() {
+		log.Println("Waiting 15 seconds to connect to database...")
+		time.Sleep(15 * time.Second)
+
+		db, err := connectToDB()
+		if err != nil {
+			log.Fatalf("Failed to connect to DB after delay: %v", err)
+		}
+
+		err = initDatabase(db)
+		if err != nil {
+			log.Fatalf("Failed to initialize database after delay: %v", err)
+		}
+
+		h.dbMu.Lock()
+		h.Db = db
+		h.dbMu.Unlock()
+		log.Println("Database connected and initialized.")
+	}()
+
+	defer func() {
+		h.dbMu.RLock()
+		dbToClose := h.Db
+		h.dbMu.RUnlock()
+		if dbToClose != nil {
+			if err := dbToClose.Close(); err != nil {
+				log.Printf("Error closing database connection: %v", err)
+			}
+		}
+	}()
 
 	addr := ":" + port
 
@@ -70,6 +106,7 @@ func main() {
 
 	http.HandleFunc("/pings", h.handlerPings)
 	http.HandleFunc("/", h.handler)
+	http.HandleFunc("/healthz", h.handlerAlive)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
@@ -101,13 +138,27 @@ func initDatabase(db *sql.DB) error {
 }
 
 func (h *MyHandler) incrementCounter() error {
-	_, err := h.Db.Exec("UPDATE counters SET count = count + 1 WHERE id = 1")
+	h.dbMu.RLock()
+	db := h.Db
+	h.dbMu.RUnlock()
+
+	if db == nil {
+		return fmt.Errorf("database not connected")
+	}
+	_, err := db.Exec("UPDATE counters SET count = count + 1 WHERE id = 1")
 	return err
 }
 
 func (h *MyHandler) getCounter() (int, error) {
+	h.dbMu.RLock()
+	db := h.Db
+	h.dbMu.RUnlock()
+
+	if db == nil {
+		return 0, fmt.Errorf("database not connected")
+	}
 	var count int
-	row := h.Db.QueryRow("SELECT count FROM counters WHERE id = 1")
+	row := db.QueryRow("SELECT count FROM counters WHERE id = 1")
 	err := row.Scan(&count)
 	if err != nil {
 		return 0, err
