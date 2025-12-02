@@ -60,3 +60,13 @@ Use:
 
 - http://loki-gateway.loki-stack.svc.cluster.local
 - `X-Scope-OrgId` header to `grafana`
+
+## Prometheus quering
+
+Forward port from `prometheus` container to `localhost:9090` and in web run:
+
+```bash
+count(kube_pod_info{namespace="prometheus", created_by_kind="StatefulSet"})
+```
+
+This would print number of pods created by StatefulSets in prometheus namespace
