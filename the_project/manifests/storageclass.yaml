@@ -4,4 +4,4 @@ metadata:
   name: todo-app-pv-class
   namespace: project
 provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate

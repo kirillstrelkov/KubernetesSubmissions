@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -16,7 +18,8 @@ type Post struct {
 }
 
 type MyHandler struct {
-	Db *sql.DB
+	Db   *sql.DB
+	dbMu sync.RWMutex
 }
 
 func (h *MyHandler) postsGet(w http.ResponseWriter, _ *http.Request) {
@@ -93,6 +96,17 @@ func (h *MyHandler) postsPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Post %s was added successfully", body)
 }
 
+func (h *MyHandler) handleAlive(w http.ResponseWriter, r *http.Request) {
+	if h.Db == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, "database not connected\n")
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "alive")
+}
+
 func (h *MyHandler) handler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		h.postsGet(w, r)
@@ -113,27 +127,45 @@ func main() {
 		panic("Environmental variable PORT is not set")
 	}
 
-	db, err := connectToDB()
-	if err != nil {
-		log.Fatalf("Failed to connect to DB: %v", err)
-	}
-	h := &MyHandler{Db: db}
-	defer func() {
-		if err := h.Db.Close(); err != nil {
-			log.Printf("Error closing database connection: %v", err)
+	h := &MyHandler{Db: nil}
+
+	go func() {
+		log.Println("Waiting 5 seconds to connect to database...")
+		time.Sleep(5 * time.Second)
+
+		db, err := connectToDB()
+		if err != nil {
+			log.Fatalf("Failed to connect to DB: %v", err)
 		}
+
+		err = initDatabase(db)
+		if err != nil {
+			log.Fatalf("Failed to initialize database: %v", err)
+		}
+
+		h.dbMu.Lock()
+		h.Db = db
+		h.dbMu.Unlock()
+		log.Println("Database connected and initialized.")
 	}()
 
-	err = initDatabase(h.Db)
-	if err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
-	}
+	defer func() {
+		h.dbMu.RLock()
+		dbToClose := h.Db
+		h.dbMu.RUnlock()
+		if dbToClose != nil {
+			if err := dbToClose.Close(); err != nil {
+				log.Printf("Error closing database connection: %v", err)
+			}
+		}
+	}()
 
 	addr := ":" + port
 
 	fmt.Printf("Server started in port %s\n", port)
 
 	http.HandleFunc("/posts", h.handler)
+	http.HandleFunc("/healthz", h.handleAlive)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/posts", http.StatusMovedPermanently)
 	})

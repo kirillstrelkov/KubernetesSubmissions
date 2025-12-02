@@ -1,34 +1,33 @@
-all: deploy k3d-apply-decrypt
+all: ns deploy
 
 .PHONY: docker-build deploy
 
-docker-build:
-	docker build -t todo-app-app ./todo-app
+ns:
+	kubens project || kubectl create namespace project
+
+docker-build-gke:
 	docker build -t $$DOCKER_FULL_REPO/todo-app-app:v1 ./todo-app
 	docker push $$DOCKER_FULL_REPO/todo-app-app:v1
-
-	docker build -t todo-backend-app ./todo-backend
 	docker build -t $$DOCKER_FULL_REPO/todo-backend-app:v1 ./todo-backend
 	docker push $$DOCKER_FULL_REPO/todo-backend-app:v1
-	
-	docker build -t create-post-run ./scripts/post
 	docker build -t $$DOCKER_FULL_REPO/create-post-run:v1 ./scripts/post
 	docker push $$DOCKER_FULL_REPO/create-post-run:v1
-
-	docker build -t pg-backup ./scripts/pg-backup
 	docker build -t $$DOCKER_FULL_REPO/pg-backup:v2 ./scripts/pg-backup
 	docker push $$DOCKER_FULL_REPO/pg-backup:v2
 
-deploy: docker-build
+docker-build:
+	docker build -t todo-app-app ./todo-app
+	docker build -t todo-backend-app ./todo-backend
+	docker build -t create-post-run ./scripts/post
+	docker build -t pg-backup ./scripts/pg-backup
+
+deploy: docker-build decrypt
 	docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/todoapp
 	k3d image import todo-app-app
 	k3d image import todo-backend-app
 	k3d image import create-post-run
-	kubectl apply -f manifests
-
-k3d-apply-decrypt:
-	export SOPS_AGE_KEY_FILE=../key.txt; \
-	find ./manifests/enc -name '*.yaml' -exec sh -c 'sops --decrypt "{}" | kubectl apply -f -' \;
+	k3d image import pg-backup
+	kubectl kustomize local-kust --load-restrictor LoadRestrictionsNone | kubectl apply -n project -f -
 
 encrypt:
 	@PUBKEY=$$(grep '# public key:' ../key.txt | cut -d ':' -f 2 | tr -d ' ') ; \
@@ -41,6 +40,10 @@ decrypt:
 
 clean:
 	kubectl delete namespace project || true
+	kubectl delete pvc todo-app-pvc || true
+	kubectl delete pv todo-app-pv || true
+	kubectl delete storageclasses todo-app-pv-class || true
 
-gke: decrypt
+
+gke: docker-build-gke decrypt
 	kubectl apply -k .

@@ -14,6 +14,7 @@ import (
 )
 
 var isOldImage = false
+var alive = false
 
 type Post struct {
 	Body string `json:"body"`
@@ -101,12 +102,27 @@ func getPosts(urlPosts string) []Post {
 }
 
 func createImageFile(h *MyHandler) {
+	fmt.Println("Waiting 5 seconds before creating image file...")
+	time.Sleep(5 * time.Second)
+
 	imgPath := h.Vars.ImgPath
 	if _, err := os.Stat(imgPath); err != nil {
 		h.fetchAndCacheImage()
 	} else {
 		fmt.Printf("Using cached image: %s\n", imgPath)
 	}
+	alive = true
+}
+
+func handleAlive(w http.ResponseWriter, r *http.Request) {
+	if !alive {
+		http.Error(w, "Service Unavailable", http.StatusServiceUnavailable)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "alive")
 }
 
 func (h *MyHandler) todoHandler(w http.ResponseWriter, r *http.Request) {
@@ -141,10 +157,11 @@ func (h *MyHandler) todoHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	h := NewHandler()
 
-	createImageFile(h)
+	go createImageFile(h)
 
 	http.HandleFunc("/image", h.imageHandler)
 	http.HandleFunc("/", h.todoHandler)
+	http.HandleFunc("/healthz", handleAlive)
 
 	addr := ":" + h.Vars.Port
 	fmt.Printf("Server started in port %s\n", h.Vars.Port)

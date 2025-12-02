@@ -21,7 +21,7 @@ resources:
   - manifests/gke/gateway.yaml
   - manifests/gke/health-check.yaml
   - manifests/gke/backup-cronjob.yaml
-  - manifests/persistent-volume-claim.yaml
+  - manifests/gke/persistent-volume-claim.yaml
   - manifests/service.yaml
   - manifests/service_backend.yaml
   - manifests/statefulset.yaml

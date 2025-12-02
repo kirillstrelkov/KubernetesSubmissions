@@ -10,11 +10,13 @@ fmt:
 lint:
 	go vet ./...
 	go run github.com/golangci/golangci-lint/cmd/golangci-lint@latest run
+	golangci-lint run
 
 build:
 	go build
 
 run:
+	go get
 	PORT=8089 POSTS_URL=http://localhost:8085/posts IMG_URL=https://picsum.photos/%d IMG_PATH=/tmp/image/image.jpg go run main.go
 
 docker-build:

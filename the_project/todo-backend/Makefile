@@ -16,7 +16,9 @@ build:
 	go build
 
 run:
-	go run main.go
+	go get
+	echo "Run manually:"
+	echo "PORT=8085 DB_URL=postgresql://<user>:<pwd>@<host>:5432/pingpongdb?sslmode=disable go run main.go"
 
 docker-build:
 	docker build -t todo-backend-app .

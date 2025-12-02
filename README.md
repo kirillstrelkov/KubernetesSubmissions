@@ -50,3 +50,4 @@
 ### Chapter 5
 
 - [4.1.](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/4.1/ping_pong_app)
+- [4.2.](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/4.2/the_project)
