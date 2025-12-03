@@ -1,13 +1,25 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: ping-pong-dep
   namespace: exercises
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: ping-pong-app
+  strategy:
+    canary:
+      steps:
+        - setWeight: 25
+        - pause:
+            duration: 10s
+        - setWeight: 50
+        - analysis:
+            templates:
+              - templateName: pp-cpu-rate
+        - pause:
+            duration: 10s
   template:
     metadata:
       labels:
@@ -15,31 +27,36 @@ spec:
     spec:
       containers:
         - name: ping-pong-app
-          image: ping-pong-app:latest
+          image: ping-pong-app:v1
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
             - name: DB_URL
-              value: ENC[AES256_GCM,data:b0ZUncew3cZ39YoQb8ttdtpndxgkoWno16DzbOlCGFxavFeNs3HoydGvOaaOdBAxLlt8bUdUxygaapLZhhiIZ2kFAU0Var4=,iv:y4XwEBl1+OD3LNlKHDyDmRYMkOsIeEbFWxTyNigsAL4=,tag:9LXePR1eyqZTVB8RG8/Jqg==,type:str]
+              value: ENC[AES256_GCM,data:Q3bg0sNjAd1puSdgp0+jIgkHAXnpxZXgxMPmGrz7Ost9ps9+DTRZnobdH2gjQGL+HpdQutoGrnZIlJHAlhxP26rdQVwJslQ=,iv:HJ9dI8gDM9zP6YN29PVF4UHaagl/TYJ2Ng94zUQyW2c=,tag:9vgO8s5kLCiPzRBlVME9zA==,type:str]
           readinessProbe:
-            initialDelaySeconds: 30
             periodSeconds: 5
             httpGet:
               path: /healthz
               port: 8080
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
 sops:
   age:
     - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBoRHJVTFE1bXBoUkVGV09E
-        eCtHNWdHZTFac0hnZTBJNFFXWld2ZGtjSEFFCjc1b2FmOWU4c0RXU0crWGpEUENG
-        SVZBbnhXTlRwYTc0a2lrVUcrUitzTlEKLS0tIFBhTzBtWGRoakJyTTVHdkhJNGhC
-        VHluQkhkSStUZzN6ZElJWURJa1FUbzQKQNWxVWCXfzHU/27zwp5r4kLcKuZInTP5
-        he9wXikMdSlTUzNODoe1AZlay2K2G4QvnPbsBBWTP3k5MygPdHRzvw==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBseVdUY2h5dWI1TzFzYXZU
+        cUZDV2E2STAzdnJMaTQzVEFlL2x2Q1pKd2lVCm5YUnJWbjZ1ejNaMFl2eTVXMHds
+        Y3dVa3R0cDdHNGhyY050emlOTUREMUUKLS0tIDFYRzBPOFkxWFdMKzJSbGFHa0lY
+        dzRDbEdOMDdBY1JreUVWeG1mQmdkRm8KXukzmktFfrYiEwTcLR8HPfHI07QIkJKD
+        I4ppn2EPsi4pU5nGABuME7gMwkgwMEWbeZli45RuuPyuba6n/GB67Q==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2025-12-01T16:32:37Z"
-  mac: ENC[AES256_GCM,data:IpfRb3+9ZJM9rjQzngoVZxuZk2VFN6+87Ni+gi0NlqGQo1D7T/JQQy7nJleUSzZB7XU1rvIpSkhJhU9FMwX/6WU7cOTHIRI3j9IZ4izMG3T3FR3AbnkiWmDpKjmHzXAKrt5UlfIkbjG/S8xkLhgRafcFXeTS6HcoUny8I0KhJBg=,iv:6hG0BKOkpZO7sL99Wy40lKPgmKlRLqECefdEh4Q4EPU=,tag:xrp5gEV4dSKp22cGvAvckQ==,type:str]
+  lastmodified: "2025-12-03T12:22:21Z"
+  mac: ENC[AES256_GCM,data:yq1wgiDl24fFUVzfhAD+4eYrkMMQbH8zYCVRDvBfm1Xfgsbchspf5AfrFT5+XVgEUPX1eteSA5GQXsGoSoSVyKVpazCiOzkeTXostzs1CBCaYXylgl7PhuH4sG36EvBcu5c8ai5B0tqFfHRyhCUxTa6GQGD07/wHVtQlgE2Qhc0=,iv:8C4N9XxwsYqtqelkb6dc+fr6kTGr8cHErdoBBGFU5U8=,tag:98un1O2H02PWc5FUElH/Ug==,type:str]
   encrypted_regex: (value)
   version: 3.11.0

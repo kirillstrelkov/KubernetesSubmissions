@@ -22,5 +22,5 @@ kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/rele
 kubectl argo rollouts get rollout flaky-update-dep --watch
 
 # start web interface
-kubectl argo rollouts dashboardrd
+kubectl argo rollouts dashboard
 ```

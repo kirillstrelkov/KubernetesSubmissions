@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"sync"
 	"time"
 
@@ -61,6 +62,33 @@ func (h *MyHandler) handlerAlive(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "alive\n")
 }
 
+func handleStress(w http.ResponseWriter, _ *http.Request) {
+	cores := runtime.NumCPU()
+	duration := 60 * time.Second
+
+	fmt.Printf("Starting stress test on %d cores for %v\n", cores, duration)
+
+	done := make(chan bool)
+
+	for range cores {
+		go func() {
+			for {
+				select {
+				case <-done:
+					return
+				default:
+					// Spin forever
+				}
+			}
+		}()
+	}
+
+	time.Sleep(duration)
+	close(done)
+
+	fmt.Fprintf(w, "Finished stress test on %d cores.", cores)
+}
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -107,6 +135,8 @@ func main() {
 	http.HandleFunc("/pings", h.handlerPings)
 	http.HandleFunc("/", h.handler)
 	http.HandleFunc("/healthz", h.handlerAlive)
+	http.HandleFunc("/stress", handleStress)
+
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
 

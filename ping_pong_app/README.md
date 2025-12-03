@@ -31,3 +31,16 @@ Check gke/README.md.
 
 1. Build images and deploy to GKE `make docker-build`
 2. Use `make gke` to apply all manifests
+
+## Rollout
+
+1. Deploy locally
+
+   ```bash
+   make
+   ```
+
+2. Go to <http://localhost:3100/> and check that v1 works.
+3. Update via UI to v2, start update and wait until first new pod is running
+4. Go to <http://localhost:8081/stress> this will load all CPUs for 1 minute
+5. Go to <http://localhost:3100/> and check that update failed

@@ -21,3 +21,10 @@ spec:
                 name: ping-pong-svc
                 port:
                   number: 3456
+          - path: /stress
+            pathType: Prefix
+            backend:
+              service:
+                name: ping-pong-svc
+                port:
+                  number: 3456

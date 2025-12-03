@@ -1,7 +1,9 @@
-all: docker-build import k3d-apply k3d-apply-decrypt
+all: ns docker-build import k3d-apply k3d-apply-decrypt
 
 .PHONY: all fmt lint build run
 
+ns:
+	kubens exercises ||	kubectl create namespace exercises
 
 fmt:
 	go fmt ./...
@@ -20,16 +22,20 @@ run:
 	@echo 'DB_URL="<postgres_url>" go run main.go'
 
 # Use env variable from gke/README.md
-docker-build:
-	docker build -t ping-pong-app .
+docker-build-gke:
 	docker build -t $$DOCKER_FULL_REPO/ping-pong-app:v3 .
 	docker push $$DOCKER_FULL_REPO/ping-pong-app:v3
+
+docker-build:
+	docker build -t ping-pong-app:v1 .
+	docker build -t ping-pong-app:v2 .
 
 docker-run:
 	docker run --rm ping-pong-app
 
 import:
-	k3d image import ping-pong-app
+	k3d image import ping-pong-app:v1
+	k3d image import ping-pong-app:v2
 
 k3d-apply:
 	kubectl apply -f manifests
@@ -38,7 +44,7 @@ k3d-apply-decrypt:
 	export SOPS_AGE_KEY_FILE=../key.txt; \
 	find ./manifests/enc -name '*.yaml' -exec sh -c 'sops --decrypt "{}" | kubectl apply -f -' \;
 
-gke:
+gke: docker-build-gke
 	kubectl apply -f manifests/namespace.yaml
 	kubectl apply -f manifests/service.yaml
 	export SOPS_AGE_KEY_FILE=../key.txt ; \
