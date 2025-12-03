@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -14,7 +15,9 @@ import (
 )
 
 type Post struct {
+	ID   int    `json:"id"`
 	Body string `json:"body"`
+	Done bool   `json:"done"`
 }
 
 type MyHandler struct {
@@ -22,30 +25,35 @@ type MyHandler struct {
 	dbMu sync.RWMutex
 }
 
-func (h *MyHandler) postsGet(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	rows, err := h.Db.Query("SELECT body FROM posts ORDER BY id ASC")
+func getPosts(db *sql.DB) ([]Post, error) {
+	rows, err := db.Query("SELECT id, body, done FROM posts ORDER BY id ASC")
 	if err != nil {
-		log.Printf("Error querying posts: %v", err)
-		http.Error(w, "Failed to retrieve posts", http.StatusInternalServerError)
-		return
+		return nil, fmt.Errorf("error querying posts: %w", err)
 	}
 	defer rows.Close()
 
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		if err := rows.Scan(&post.Body); err != nil {
-			log.Printf("Error scanning post row: %v", err)
-			http.Error(w, "Failed to process posts", http.StatusInternalServerError)
-			return
+		if err := rows.Scan(&post.ID, &post.Body, &post.Done); err != nil {
+			return nil, fmt.Errorf("error scanning post row: %w", err)
 		}
 		posts = append(posts, post)
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Printf("Error iterating over post rows: %v", err)
+		return nil, fmt.Errorf("error iterating over post rows: %w", err)
+	}
+
+	return posts, nil
+}
+
+func (h *MyHandler) postsGet(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	posts, err := getPosts(h.Db)
+	if err != nil {
+		log.Printf("Error retrieving posts: %v", err)
 		http.Error(w, "Failed to retrieve posts", http.StatusInternalServerError)
 		return
 	}
@@ -107,6 +115,42 @@ func (h *MyHandler) handleAlive(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "alive")
 }
 
+func (h *MyHandler) markDoneHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	idString := r.PathValue("id")
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	result, err := h.Db.Exec("UPDATE posts SET done = TRUE WHERE id = $1", id)
+	if err != nil {
+		log.Printf("Error updating post in database: %v", err)
+		http.Error(w, "Failed to update post", http.StatusInternalServerError)
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Error getting rows affected: %v", err)
+		http.Error(w, "Failed to update post", http.StatusInternalServerError)
+		return
+	}
+
+	if rowsAffected == 0 {
+		http.Error(w, "Post not found", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Post with ID %d marked as done", id)
+}
+
 func (h *MyHandler) handler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		h.postsGet(w, r)
@@ -119,6 +163,23 @@ func (h *MyHandler) handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+}
+
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func main() {
@@ -164,13 +225,16 @@ func main() {
 
 	fmt.Printf("Server started in port %s\n", port)
 
-	http.HandleFunc("/posts", h.handler)
-	http.HandleFunc("/healthz", h.handleAlive)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/posts", h.handler)
+	mux.HandleFunc("/healthz", h.handleAlive)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/posts", http.StatusMovedPermanently)
 	})
+	mux.HandleFunc("/todos/{id}", h.markDoneHandler)
 
-	log.Fatal(http.ListenAndServe(addr, nil))
+	log.Fatal(http.ListenAndServe(addr, enableCORS(mux)))
 }
 
 func connectToDB() (*sql.DB, error) {
@@ -194,23 +258,32 @@ func initDatabase(db *sql.DB) error {
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS posts (
 			id SERIAL PRIMARY KEY,
-			body TEXT NOT NULL
+			body TEXT NOT NULL,
+			done BOOLEAN DEFAULT FALSE
 		);
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to create posts table: %w", err)
 	}
 
-	var posts = []string{
-		"Learn JavaScript",
-		"Learn React",
-		"Build a project",
+	_, err = db.Exec(`ALTER TABLE posts ADD COLUMN IF NOT EXISTS done BOOLEAN DEFAULT FALSE;`)
+	if err != nil {
+		return fmt.Errorf("failed to add done column: %w", err)
 	}
-	for _, post := range posts {
-		_, err := db.Exec("INSERT INTO posts (body) VALUES ($1)", post)
-		if err != nil {
-			log.Printf("Error inserting post into database: %v", err)
-			panic(err)
+
+	posts, _ := getPosts(db)
+	if len(posts) == 0 {
+		var posts = []string{
+			"Learn JavaScript",
+			"Learn React",
+			"Build a project",
+		}
+		for _, post := range posts {
+			_, err := db.Exec("INSERT INTO posts (body) VALUES ($1)", post)
+			if err != nil {
+				log.Printf("Error inserting post into database: %v", err)
+				panic(err)
+			}
 		}
 	}
 

@@ -11,14 +11,25 @@
     <img src="/image" alt="Random image" width="200" height="200" />
 
     <div class="todo-input-container">
-        <form action="/posts" method="post">
+        <form action="{{ .PostsUrl }}" method="post">
             <input type="text" name="body" placeholder="What needs to be done?">
             <button type="submit">Create todo</button>
         </form>
     </div>
 
-    <ul>
-        {{range .Posts}}
+    <h2>Todo:</h2>
+    <ul id="todo-list">
+        {{range .TodoPosts}}
+        <li class="todo">
+            {{ .Body }}
+            <button onclick="markDone({{ .ID }})">Mark as done</button>
+        </li>
+        {{end}}
+    </ul>
+
+    <h2>Done:</h2>
+    <ul id="done-list">
+        {{range .DonePosts}}
         <li>{{.Body}}</li>
         {{end}}
     </ul>
@@ -27,6 +38,27 @@
         DevOps with Kubernetes 2025
     </div>
 
+    <script>
+        async function markDone(id) {
+            try {
+                const todoUrl = `{{ .TodoUrl }}/${id}`;
+                const resp = await fetch(todoUrl, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ done: true })
+                });
+
+                if (!resp.ok) {
+                    const text = await resp.text();
+                    alert('Failed: ' + resp.status + ' ' + text);
+                    return;
+                }
+                location.reload();
+            } catch (err) {
+                alert('Request failed: ' + err);
+            }
+        }
+    </script>
 </body>
 
 </html>

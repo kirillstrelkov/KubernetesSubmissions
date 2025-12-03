@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -17,11 +18,16 @@ var isOldImage = false
 var alive = false
 
 type Post struct {
+	ID   int    `json:"id"`
 	Body string `json:"body"`
+	Done bool   `json:"done"`
 }
 
 type TemplateData struct {
-	Posts []Post
+	TodoPosts []Post
+	DonePosts []Post
+	PostsUrl  string
+	TodoUrl   string
 }
 
 type EnvVars struct {
@@ -29,6 +35,7 @@ type EnvVars struct {
 	PostsURL string
 	ImgPath  string
 	ImgURL   string
+	IsLocal  bool
 }
 
 type MyHandler struct {
@@ -67,6 +74,7 @@ func NewHandler() *MyHandler {
 		PostsURL: urlPosts,
 		ImgPath:  imgPath,
 		ImgURL:   imgURL,
+		IsLocal:  strings.Contains(urlPosts, "localhost"),
 	}
 	return &MyHandler{Vars: vars}
 }
@@ -142,8 +150,26 @@ func (h *MyHandler) todoHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/index.html"))
 	posts := getPosts(h.Vars.PostsURL)
 
+	todoPosts := []Post{}
+	donePosts := []Post{}
+
+	for _, post := range posts {
+		if post.Done {
+			donePosts = append(donePosts, post)
+		} else {
+			todoPosts = append(todoPosts, post)
+		}
+	}
+
 	data := TemplateData{
-		Posts: posts,
+		TodoPosts: todoPosts,
+		DonePosts: donePosts,
+		PostsUrl:  "/posts",
+		TodoUrl:   "/todos",
+	}
+	if h.Vars.IsLocal {
+		data.PostsUrl = "http://localhost:8085/posts"
+		data.TodoUrl = fmt.Sprintf("%s/todos", strings.TrimSuffix(h.Vars.PostsURL, "posts"))
 	}
 
 	err := tmpl.Execute(w, data)
