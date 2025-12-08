@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-broadcaster-dep
+  namespace: project
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: todo-broadcaster-app
+  template:
+    metadata:
+      labels:
+        app: todo-broadcaster-app
+    spec:
+      containers:
+        - name: todo-broadcaster-app
+          image: TODO_BROADCASTER_APP
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "8087"
+            - name: NATS_URL
+              value: "nats://my-nats.project.svc.cluster.local:4222"
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: project-secret
+                  key: TELEGRAM_BOT_TOKEN
+            - name: TELEGRAM_CHAT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: project-secret
+                  key: TELEGRAM_CHAT_ID
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8087
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8087
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8087
+            periodSeconds: 5

@@ -68,3 +68,26 @@ resource.labels.namespace_name="project"
 
 Example:
 ![alt text](./docs/gke_logs.png "Title")
+
+## Prometheus
+
+Check [../monitoring/README.md](../monitoring/README.md)
+
+## NATS
+
+Install NATS
+
+```bash
+make install-nats
+```
+
+### In order to view via Grafana
+
+1. Label nats service monitor resource so it will be available via prometheus
+
+   ```bash
+   make label-nats-metrics
+   ```
+
+2. Login to grafana web app
+3. Create dashboard with <https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json>

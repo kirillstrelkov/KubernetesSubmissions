@@ -17,8 +17,9 @@ build:
 
 run:
 	go get
-	echo "Run manually:"
-	echo "PORT=8085 DB_URL=postgresql://<user>:<pwd>@<host>:5432/pingpongdb?sslmode=disable go run main.go"
+	echo "NATS port should be forwarded from k3d cluster to localhost:42222"
+	echo "postgresql should be running in docker container on 172.17.0.2:5432 and database pingpongdb should exist"
+	PORT=8085 NATS_URL=http://localhost:42222/ DB_URL=postgresql://username:password@172.17.0.2:5432/pingpongdb?sslmode=disable go run main.go
 
 docker-build:
 	docker build -t todo-backend-app .

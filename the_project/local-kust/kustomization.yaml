@@ -7,6 +7,9 @@ images:
   - name: TODO_BACKEND_APP
     newName: todo-backend-app
     newTag: latest
+  - name: TODO_BROADCASTER_APP
+    newName: todo-broadcaster-app
+    newTag: latest
   - name: CREATE_POST_RUN
     newName: create-post-run
     newTag: latest
@@ -18,6 +21,7 @@ resources:
   - ../manifests/configmap.yaml
   - ../manifests/cronjob.yaml
   - ../manifests/deployment.yaml
+  - ../manifests/broadcaster-dep.yaml
   - ../manifests/dec/secrets.yaml
   - ../manifests/persistent-volume-claim.yaml
   - ../manifests/persistent-volume.yaml

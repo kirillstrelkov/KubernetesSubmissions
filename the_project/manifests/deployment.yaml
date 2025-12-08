@@ -68,6 +68,8 @@ spec:
                 secretKeyRef:
                   name: project-secret
                   key: DB_URL
+            - name: NATS_URL
+              value: "nats://my-nats.project.svc.cluster.local:4222"
           resources:
             requests:
               memory: "64Mi"

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/nats-io/nats.go"
 )
 
 type Post struct {
@@ -22,7 +23,39 @@ type Post struct {
 
 type MyHandler struct {
 	Db   *sql.DB
+	Nats *nats.Conn
 	dbMu sync.RWMutex
+}
+
+func connectToNATS() *nats.Conn {
+	natsURL := os.Getenv("NATS_URL")
+	if natsURL == "" {
+		panic("Environmental variable NATS_URL is not set")
+	}
+
+	log.Printf("Connecting to NATS at %s...", natsURL)
+	nc, err := nats.Connect(natsURL)
+	if err != nil {
+		log.Printf("WARNING: Failed to connect to NATS: %v. The app will work, but messages won't be sent.", err)
+		return nil
+	}
+
+	log.Println("Successfully connected to NATS.")
+	return nc
+}
+
+func publishToNATS(nc *nats.Conn, subject string, payload any) {
+	msgBytes, err := json.Marshal(payload)
+	if err != nil {
+		log.Printf("Error marshalling NATS payload for subject %s: %v", subject, err)
+		return
+	}
+
+	if err := nc.Publish(subject, msgBytes); err != nil {
+		log.Printf("Error publishing to NATS subject %s: %v", subject, err)
+	} else {
+		log.Printf("NATS: Published to '%s': %s", subject, string(msgBytes))
+	}
 }
 
 func getPosts(db *sql.DB) ([]Post, error) {
@@ -48,10 +81,23 @@ func getPosts(db *sql.DB) ([]Post, error) {
 	return posts, nil
 }
 
+func (h *MyHandler) getDB() *sql.DB {
+	h.dbMu.RLock()
+	defer h.dbMu.RUnlock()
+	return h.Db
+}
+
 func (h *MyHandler) postsGet(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	posts, err := getPosts(h.Db)
+	db := h.getDB()
+
+	if db == nil {
+		http.Error(w, "Database not ready", http.StatusServiceUnavailable)
+		return
+	}
+
+	posts, err := getPosts(db)
 	if err != nil {
 		log.Printf("Error retrieving posts: %v", err)
 		http.Error(w, "Failed to retrieve posts", http.StatusInternalServerError)
@@ -68,7 +114,6 @@ func (h *MyHandler) postsGet(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(jsonPosts); err != nil {
 		log.Printf("Error writing response: %v", err)
-		// No http.Error here as headers might already be sent
 	}
 }
 
@@ -91,13 +136,25 @@ func (h *MyHandler) postsPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	db := h.getDB()
+
+	if db == nil {
+		http.Error(w, "Database not ready", http.StatusServiceUnavailable)
+		return
+	}
+
 	log.Printf("Adding a new todo: %s", body)
-	_, err := h.Db.Exec("INSERT INTO posts (body) VALUES ($1)", body)
+
+	var newID int
+	err := db.QueryRow("INSERT INTO posts (body) VALUES ($1) RETURNING id", body).Scan(&newID)
 	if err != nil {
 		log.Printf("Error inserting post into database: %v", err)
 		http.Error(w, "Failed to create post", http.StatusInternalServerError)
 		return
 	}
+
+	newPost := Post{ID: newID, Body: body, Done: false}
+	publishToNATS(h.Nats, "todo.created", newPost)
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
@@ -128,7 +185,14 @@ func (h *MyHandler) markDoneHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.Db.Exec("UPDATE posts SET done = TRUE WHERE id = $1", id)
+	db := h.getDB()
+
+	if db == nil {
+		http.Error(w, "Database not ready", http.StatusServiceUnavailable)
+		return
+	}
+
+	result, err := db.Exec("UPDATE posts SET done = TRUE WHERE id = $1", id)
 	if err != nil {
 		log.Printf("Error updating post in database: %v", err)
 		http.Error(w, "Failed to update post", http.StatusInternalServerError)
@@ -146,6 +210,9 @@ func (h *MyHandler) markDoneHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Post not found", http.StatusNotFound)
 		return
 	}
+
+	updatedPost := Post{ID: id, Done: true}
+	publishToNATS(h.Nats, "todo.updated", updatedPost)
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Post with ID %d marked as done", id)
@@ -168,9 +235,7 @@ func (h *MyHandler) handler(w http.ResponseWriter, r *http.Request) {
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		if r.Method == "OPTIONS" {
@@ -188,7 +253,15 @@ func main() {
 		panic("Environmental variable PORT is not set")
 	}
 
-	h := &MyHandler{Db: nil}
+	nc := connectToNATS()
+	if nc != nil {
+		defer nc.Close()
+	}
+
+	h := &MyHandler{
+		Db:   nil,
+		Nats: nc,
+	}
 
 	go func() {
 		log.Println("Waiting 5 seconds to connect to database...")
@@ -211,9 +284,8 @@ func main() {
 	}()
 
 	defer func() {
-		h.dbMu.RLock()
-		dbToClose := h.Db
-		h.dbMu.RUnlock()
+		dbToClose := h.getDB()
+
 		if dbToClose != nil {
 			if err := dbToClose.Close(); err != nil {
 				log.Printf("Error closing database connection: %v", err)

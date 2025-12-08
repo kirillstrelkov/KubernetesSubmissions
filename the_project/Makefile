@@ -6,6 +6,9 @@ ns:
 	kubectl create namespace project || true
 	kubens project
 
+install-nats: ns
+	helm install -f config/nats.yaml my-nats oci://registry-1.docker.io/bitnamicharts/nats
+
 docker-build-gke:
 	docker build -t $$DOCKER_FULL_REPO/todo-app-app:v1 ./todo-app
 	docker push $$DOCKER_FULL_REPO/todo-app-app:v1
@@ -19,6 +22,7 @@ docker-build-gke:
 docker-build:
 	docker build -t todo-app-app ./todo-app
 	docker build -t todo-backend-app ./todo-backend
+	docker build -t todo-broadcaster-app ./todo-broadcaster
 	docker build -t create-post-run ./scripts/post
 	docker build -t pg-backup ./scripts/pg-backup
 
@@ -26,6 +30,7 @@ deploy: docker-build decrypt
 	docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/todoapp
 	k3d image import todo-app-app
 	k3d image import todo-backend-app
+	k3d image import todo-broadcaster-app
 	k3d image import create-post-run
 	k3d image import pg-backup
 	kubectl kustomize local-kust --load-restrictor LoadRestrictionsNone | kubectl apply -n project -f -
@@ -45,6 +50,11 @@ clean:
 	kubectl delete pv todo-app-pv || true
 	kubectl delete storageclasses todo-app-pv-class || true
 
-
 gke: docker-build-gke decrypt
 	kubectl apply -k .
+
+create-todos:
+	bash ./scripts/create_todos.sh
+
+label-nats-metrics:
+	kubectl label servicemonitors.monitoring.coreos.com -n prometheus my-nats-metrics $(kubectl -n prometheus get prometheus -ojson | grep -A 5 "serviceMonitorSelector" | grep kube | sed 's/"//g' | sed 's/: /=/')
