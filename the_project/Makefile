@@ -3,7 +3,8 @@ all: ns deploy
 .PHONY: docker-build deploy
 
 ns:
-	kubens project || kubectl create namespace project
+	kubectl create namespace project || true
+	kubens project
 
 docker-build-gke:
 	docker build -t $$DOCKER_FULL_REPO/todo-app-app:v1 ./todo-app

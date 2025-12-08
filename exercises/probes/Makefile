@@ -1,7 +1,8 @@
 all: apply
 
 ns: 
-	kubens exercises || kubectl create namespace exercises
+	kubectl create namespace exercises || true
+	kubens exercises
 
 setup: ns
 	kubectl create namespace argo-rollouts

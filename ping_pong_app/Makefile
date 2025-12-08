@@ -3,7 +3,8 @@ all: ns docker-build import k3d-apply k3d-apply-decrypt
 .PHONY: all fmt lint build run
 
 ns:
-	kubens exercises ||	kubectl create namespace exercises
+	kubectl create namespace exercises || true
+	kubens exercises
 
 fmt:
 	go fmt ./...
