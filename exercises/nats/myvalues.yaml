@@ -1,0 +1,14 @@
+auth:
+  enabled: false
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    namespace: prometheus
+
+  image:
+    repository: bitnamilegacy/nats-exporter
+
+image:
+  repository: bitnamilegacy/nats
