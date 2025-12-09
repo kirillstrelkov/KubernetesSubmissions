@@ -27,13 +27,13 @@ spec:
     spec:
       containers:
         - name: ping-pong-app
-          image: ping-pong-app:v1
-          imagePullPolicy: Never
+          image: PING_PONG_APP
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
             - name: DB_URL
-              value: ENC[AES256_GCM,data:Q3bg0sNjAd1puSdgp0+jIgkHAXnpxZXgxMPmGrz7Ost9ps9+DTRZnobdH2gjQGL+HpdQutoGrnZIlJHAlhxP26rdQVwJslQ=,iv:HJ9dI8gDM9zP6YN29PVF4UHaagl/TYJ2Ng94zUQyW2c=,tag:9vgO8s5kLCiPzRBlVME9zA==,type:str]
+              value: ENC[AES256_GCM,data:9iI9D058sK14JlpH9MDr158KydCzWFDq47cc1hiMzkvHPfgvWuLTrOdZK5FOK6y6vGtji6A+hgzNXAZWiUyTUuYyXETKwDc=,iv:7Eps7zfGwEE/gnNLVa+rlYDPxMDFabfYSYAL2pIpXqI=,tag:qsByo15N1zJmRJ5SfjKXGw==,type:str]
           readinessProbe:
             periodSeconds: 5
             httpGet:
@@ -50,13 +50,13 @@ sops:
     - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBseVdUY2h5dWI1TzFzYXZU
-        cUZDV2E2STAzdnJMaTQzVEFlL2x2Q1pKd2lVCm5YUnJWbjZ1ejNaMFl2eTVXMHds
-        Y3dVa3R0cDdHNGhyY050emlOTUREMUUKLS0tIDFYRzBPOFkxWFdMKzJSbGFHa0lY
-        dzRDbEdOMDdBY1JreUVWeG1mQmdkRm8KXukzmktFfrYiEwTcLR8HPfHI07QIkJKD
-        I4ppn2EPsi4pU5nGABuME7gMwkgwMEWbeZli45RuuPyuba6n/GB67Q==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBaQUNFMDUya1gwWjJKZ3di
+        Snd2RjVCT1E2K3Q0WlZIaUIwc003eWh5WVNBCnJPeEZ4MmQvUkJJSmIzZHlCYzhz
+        QWNLeFQxdlUwNmFLZUtNQWVMSncvdlEKLS0tICtPUnNMSFJBL1FCUWQ2Y0N3dEFJ
+        ZmJ4anphalZSRUU0ZTQxeXRWODdJOFUKGgnyiIUi75tUBBsOP7hchI3AEeRfKxwi
+        sffrd7rwFTQpfejcCo2g69yS1ClgkobKZZGqPE4pSpMi92ZmuI6Y1g==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2025-12-03T12:22:21Z"
-  mac: ENC[AES256_GCM,data:yq1wgiDl24fFUVzfhAD+4eYrkMMQbH8zYCVRDvBfm1Xfgsbchspf5AfrFT5+XVgEUPX1eteSA5GQXsGoSoSVyKVpazCiOzkeTXostzs1CBCaYXylgl7PhuH4sG36EvBcu5c8ai5B0tqFfHRyhCUxTa6GQGD07/wHVtQlgE2Qhc0=,iv:8C4N9XxwsYqtqelkb6dc+fr6kTGr8cHErdoBBGFU5U8=,tag:98un1O2H02PWc5FUElH/Ug==,type:str]
+  lastmodified: "2025-12-09T15:16:30Z"
+  mac: ENC[AES256_GCM,data:3MAJPE27DtKzSKbpuwG6v3npzWDVPPVdFKj4bdmLBM3L3BneqYm0kJxc3VU9VMUKa/xHNQ2p+zaf8DIxXOG8UWixLDsEGTx/KVmZC0T6dusL9CuKgwmMjJ+AW8QBuU1c8R0xP0Qy6rAtN6oNFK4I5iNOOqguE6Pi5hTo6gvLVn0=,iv:5C6hnY03ssimfFUhS2J8QsqKFmsI4uD2rAKGyVs+nxs=,tag:2qO/Dh8KkO5FaLxLj69rdw==,type:str]
   encrypted_regex: (value)
   version: 3.11.0

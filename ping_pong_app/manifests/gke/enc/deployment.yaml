@@ -21,7 +21,7 @@ spec:
             - containerPort: 8080
           env:
             - name: DB_URL
-              value: ENC[AES256_GCM,data:zkQZF6X8FscsjMATdkU5G5Ui5bw79I5YuHIAgcwMoHzZXURKEyPJxKvhKNfqmp2fopjT7kwl79db57NR0s/nT4maIUcuY0Q=,iv:DyYDWM7Qmt4GO3XSXHOaqIm012Xkg9Yyhx3X3ueQZBc=,tag:U5WspslDiLRB52QooOE6OA==,type:str]
+              value: ENC[AES256_GCM,data:QuhyXJhs/ps8Vi5yx3WKKYZz9ZOPtss4CBA1BJsdUBC/+jch1N9/o/66AFTawvIBrmx2nhLIvBLfw9xOwqfgeMVClvDeAeI=,iv:3BKVqLgmKHUr3DfRy5ihUJtot8sitH4ip2BB7DUjIMg=,tag:S4ZEDmE9ihbp3NJWxYW04A==,type:str]
           readinessProbe:
             initialDelaySeconds: 30
             periodSeconds: 5
@@ -33,13 +33,13 @@ sops:
     - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA3NzMwWUhKKzVFbDZOSC9p
-        N3JKSmh0cUtNZTlZSlMxK3VsNVYrMURNajN3CisxT3FGSVZKaFNiQkRPVmV1RXUr
-        WWpVSjlSYm1qR2JxUURWVWN2eS9TMU0KLS0tIEFqcms3dUNZSVFrYnhELzdsOTBo
-        MWNoR1FET0lvMncyYlowUUh0MEYzd28KDbNRWYftozZ42/bE21ZIEMJQ9MTlRYqc
-        J2/twTzzJwduq/5n45PjT8JR96KQ7upuvC15OmxSYJ+ChVDHN+yctg==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB0cjNLSXJhUEpLR085ZFdm
+        VXlTazlXeWJudHpkL3BLMDVQVlNCenNmblR3Ck5McGY5bkMydkdUT0NpUy9Wc3Vw
+        TU9QWTFNR3ltQjA3MU45ODVNdWt2ZVEKLS0tIFNYNDJyczZiR0NobGpONUUva0pa
+        dTFhaXFzVkY1Yk9yd2hCdTREZjFpWDAK8NZhLvyHTnYhvTzur+jifH9cGmIqOKQr
+        msKcvw5CSbEECnwM8Vf/DmmSSWGKwa/PZwWgQzgYZ+T+Y972LRztrg==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2025-12-01T16:32:37Z"
-  mac: ENC[AES256_GCM,data:k7pdUix7FrJFXzIEQP44Hb5nTj/b6NA3c4QWEGZB0pujasJ9rNEPRW+N8BM7/SYGwYPIUMzQz+DkKaGUaQES94kP2/vEZd+/yP46pBCyTmaYdCQMg5MJSNhy+2oNWlG62k9cAN0JcSD41scDdSQnVQ/WbO1DfUFpU/1djvbtSFA=,iv:YjmTrAFESEDYhCpDpEQ0bY2JFG6tnYs4a7tSVFIPuDs=,tag:PJhHYXAPPuy0F5J3NafKmQ==,type:str]
+  lastmodified: "2025-12-09T15:16:30Z"
+  mac: ENC[AES256_GCM,data:JDpfns+D8eGnl8S7nw7jvpPgel7k0sWlvEGwz8iv9Ahzr17EA/7e5ucfqzfTc99Y2oBXSuLiPiS8lOvodxptnk28Ilbz9BsSTLcFK9XnpdELnjHrcbZ8N78FalzM7pzV0hHYACS7WfqtgjcMLO52/hqDoaVGKgAdjM/SboIbO+Y=,iv:ZX13U6ppQlB0iemd6H7pQW73qoVe8IVTMwPVcqBtrmQ=,tag:4IDrL4p4do+7JT0gvSnCvw==,type:str]
   encrypted_regex: (value)
   version: 3.11.0

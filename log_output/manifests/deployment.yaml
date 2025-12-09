@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: log-output-app
-          image: log-output-app:latest
-          imagePullPolicy: Never
+          image: LOG_OUTPUT_APP
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:

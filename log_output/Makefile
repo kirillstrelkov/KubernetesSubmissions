@@ -28,7 +28,7 @@ docker-run:
 	docker run -d --rm log-output-app
 
 k3d-apply:
-	kubectl apply -f manifests
+	kubectl apply -k .
 
 gke:
 	echo "NOTE: ping_pong_app should be deployed"
