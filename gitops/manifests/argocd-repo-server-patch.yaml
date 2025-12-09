@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-repo-server
+  namespace: argocd
+spec:
+  template:
+    spec:
+      volumes:
+        - name: cmp-plugin-config
+          configMap:
+            name: cmp-plugin
+        - name: sops-age
+          secret:
+            secretName: sops-age
+        - name: custom-tools
+          emptyDir: {}
+      containers:
+        - name: argocd-repo-server
+          volumeMounts:
+            - mountPath: /home/argocd/cmp-server/plugins
+              name: custom-tools
+        - name: cmp-sops
+          image: custom-argocd-sidecar:v1
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+          command: ["/usr/local/bin/argocd-cmp-server"]
+          volumeMounts:
+            - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+              name: cmp-plugin-config
+              subPath: plugin.yaml
+            - mountPath: /home/argocd/cmp-server/plugins
+              name: custom-tools
+            - mountPath: /helm-secrets
+              name: sops-age

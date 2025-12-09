@@ -43,6 +43,12 @@ import:
 k3d-apply: decrypt
 	kubectl apply -k .
 
+argocd-deploy: ns
+	kubectl kustomize kust-argocd --load-restrictor LoadRestrictionsNone | kubectl apply -f -
+
+argocd-add-app: ns
+	kubectl apply -f manifests/argocd-app.yaml
+
 gke: docker-build-gke
 	kubectl apply -f manifests/namespace.yaml
 	kubectl apply -f manifests/service.yaml

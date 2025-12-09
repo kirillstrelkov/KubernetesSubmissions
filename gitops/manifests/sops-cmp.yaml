@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cmp-plugin
+  namespace: argocd
+data:
+  plugin.yaml: |
+    apiVersion: argoproj.io/v1alpha1
+    kind: ConfigManagementPlugin
+    metadata:
+      name: custom-argocd-cmp-sops
+    spec:
+      allowConcurrency: true
+      lockRepo: false
+
+      # --- FIXED DISCOVERY SECTION ---
+      discover:
+        find:
+          command: ["/bin/bash", "-c", "echo match"]
+      # -------------------------------
+
+      generate:
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            export SOPS_AGE_KEY_FILE=/helm-secrets/key.txt
+            
+            pushd .. > /dev/null
+            
+            echo "Decrypting files in $(pwd)..." >&2
+            
+            find . -name "*.yaml" -type f -exec sops -d -i {} \; 2>/dev/null || true
+            
+            popd > /dev/null
+            
+            kustomize build --load-restrictor LoadRestrictionsNone .

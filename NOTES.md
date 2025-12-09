@@ -1,5 +1,18 @@
 # Notes
 
+## Increase file watcher limits
+
+```bash
+# temporary
+sudo sysctl -w fs.inotify.max_user_watches=524288
+sudo sysctl -w fs.inotify.max_user_instances=8192
+
+# make it permanent
+echo "fs.inotify.max_user_watches = 524288" | sudo tee -a /etc/sysctl.conf
+echo "fs.inotify.max_user_instances = 8192" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
 ## Reset k3d
 
 ```bash
