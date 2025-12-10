@@ -44,3 +44,13 @@ NOTE: choose proper regex `^(data)$` or `'(Data)$'`
 export SOPS_AGE_KEY_FILE=../key.txt
 sops --decrypt manifests/enc/secrets.yaml
 ```
+
+## ArgoCD
+
+In order to make everything work next resources should be deployed:
+
+- [loki](monitoring/README.md)
+- [prometheus](monitoring/README.md)
+- [argo rollouts](exercises/probes/Readme.md)
+- [argocd](gitops/README.md)
+- [nats](exercises/nats/README.md)

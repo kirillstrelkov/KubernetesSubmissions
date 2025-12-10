@@ -1,6 +1,6 @@
 # ArgoCD
 
-> **NOTE**: versions of argo server and sidecar pluging should match!
+> **NOTE**: versions of argo server and sidecar pluging should match! ArgoCD sidecar is need to add SOPS for decrypting manifests.
 
 Check [./Makefile](./Makefile) for more information
 
