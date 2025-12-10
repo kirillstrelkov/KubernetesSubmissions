@@ -1,31 +1,31 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-  - name: TODO_APP_APP
-    newName: kirillstrelkov/todo-app-app
-    newTag: latest
-  - name: TODO_BACKEND_APP
-    newName: kirillstrelkov/todo-backend-app
-    newTag: latest
-  - name: TODO_BROADCASTER_APP
-    newName: kirillstrelkov/todo-broadcaster-app
-    newTag: latest
-  - name: CREATE_POST_RUN
-    newName: kirillstrelkov/create-post-run
-    newTag: latest
-  - name: PG_BACKUP_IMAGE
-    newName: kirillstrelkov/pg-backup
-    newTag: latest
+- name: CREATE_POST_RUN
+  newName: kirillstrelkov/create-post-run
+  newTag: a1f2e4f64863b314e95d27668e7d204b08ff70d7
+- name: PG_BACKUP_IMAGE
+  newName: kirillstrelkov/pg-backup
+  newTag: a1f2e4f64863b314e95d27668e7d204b08ff70d7
+- name: TODO_APP_APP
+  newName: kirillstrelkov/todo-app-app
+  newTag: a1f2e4f64863b314e95d27668e7d204b08ff70d7
+- name: TODO_BACKEND_APP
+  newName: kirillstrelkov/todo-backend-app
+  newTag: a1f2e4f64863b314e95d27668e7d204b08ff70d7
+- name: TODO_BROADCASTER_APP
+  newName: kirillstrelkov/todo-broadcaster-app
+  newTag: a1f2e4f64863b314e95d27668e7d204b08ff70d7
 resources:
-  - ../manifests/namespace.yaml
-  - ../manifests/configmap.yaml
-  - ../manifests/cronjob.yaml
-  - ../manifests/deployment.yaml
-  - ../manifests/broadcaster-dep.yaml
-  - ../manifests/enc/secrets.yaml
-  - ../manifests/persistent-volume-claim.yaml
-  - ../manifests/persistent-volume.yaml
-  - ../manifests/ingress.yaml
-  - ../manifests/service.yaml
-  - ../manifests/service_backend.yaml
-  - ../manifests/statefulset.yaml
+- ../manifests/namespace.yaml
+- ../manifests/configmap.yaml
+- ../manifests/cronjob.yaml
+- ../manifests/deployment.yaml
+- ../manifests/broadcaster-dep.yaml
+- ../manifests/enc/secrets.yaml
+- ../manifests/persistent-volume-claim.yaml
+- ../manifests/persistent-volume.yaml
+- ../manifests/ingress.yaml
+- ../manifests/service.yaml
+- ../manifests/service_backend.yaml
+- ../manifests/statefulset.yaml
