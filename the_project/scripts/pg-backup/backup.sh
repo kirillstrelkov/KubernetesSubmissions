@@ -13,4 +13,3 @@ echo "Uploading to GCS Bucket: $GCS_BUCKET..."
 gsutil cp "$BACKUP_NAME" "gs://$GCS_BUCKET/$BACKUP_NAME"
 
 echo "Backup done."
-

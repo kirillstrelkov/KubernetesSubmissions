@@ -190,7 +190,7 @@ func main() {
 	http.HandleFunc("/healthz", handleAlive)
 
 	addr := ":" + h.Vars.Port
-	fmt.Printf("Server started in port  %s\n", h.Vars.Port)
+	fmt.Printf("Server started in port %s\n", h.Vars.Port)
 
 	go fetchInBackground()
 
