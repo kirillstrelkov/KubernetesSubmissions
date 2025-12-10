@@ -130,7 +130,7 @@ func main() {
 
 	addr := ":" + port
 
-	fmt.Printf("Server started in port %s\n", port)
+	fmt.Printf("Server v2 started in port %s\n", port)
 
 	http.HandleFunc("/pings", h.handlerPings)
 	http.HandleFunc("/", h.handler)
