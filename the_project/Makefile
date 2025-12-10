@@ -33,7 +33,7 @@ deploy: docker-build decrypt
 	k3d image import todo-broadcaster-app
 	k3d image import create-post-run
 	k3d image import pg-backup
-	kubectl kustomize local-kust --load-restrictor LoadRestrictionsNone | kubectl apply -n project -f -
+	kubectl kustomize kust-local --load-restrictor LoadRestrictionsNone | kubectl apply -n project -f -
 
 encrypt:
 	@PUBKEY=$$(grep '# public key:' ../key.txt | cut -d ':' -f 2 | tr -d ' ') ; \
