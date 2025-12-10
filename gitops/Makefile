@@ -9,7 +9,7 @@ install: ns
 
 get-credentials:
 	kubectl get -n argocd secrets argocd-initial-admin-secret -o yaml | grep 'password' | awk '{{print $$2}}' | base64 -d
-	echo
+	@echo ""
 
 upload-sops-key:
 	kubectl create secret generic sops-age --from-file=key.txt=../key.txt -n argocd
