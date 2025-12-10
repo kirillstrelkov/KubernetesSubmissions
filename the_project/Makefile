@@ -60,5 +60,5 @@ label-nats-metrics:
 	kubectl label servicemonitors.monitoring.coreos.com -n prometheus my-nats-metrics $(kubectl -n prometheus get prometheus -ojson | grep -A 5 "serviceMonitorSelector" | grep kube | sed 's/"//g' | sed 's/: /=/')
 
 argocd: ns
-	kubectl kustomize kust-argocd --load-restrictor LoadRestrictionsNone | kubectl apply -n project -f - || true
+	# kubectl kustomize kust-argocd --load-restrictor LoadRestrictionsNone | kubectl apply -n project -f - || true
 	kubectl apply -f manifests/argocd-app.yaml
