@@ -78,7 +78,7 @@ func main() {
 		fmt.Fprint(w, "alive\n")
 	})
 	addr := ":" + port
-	fmt.Printf("Server started in port %s\n", port)
+	fmt.Printf("Server started in port  %s\n", port)
 
 	http.ListenAndServe(addr, mux)
 }
