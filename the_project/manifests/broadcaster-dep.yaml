@@ -20,6 +20,8 @@ spec:
           env:
             - name: PORT
               value: "8087"
+            - name: APP_ENV
+              value: "staging"
             - name: NATS_URL
               value: "nats://my-nats.default.svc.cluster.local:4222"
             - name: TELEGRAM_BOT_TOKEN

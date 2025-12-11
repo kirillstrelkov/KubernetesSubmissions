@@ -22,6 +22,8 @@ type TelegramMessage struct {
 	Text   string `json:"text"`
 }
 
+var appEnv string
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -33,13 +35,19 @@ func main() {
 		panic("Environmental variable NATS_URL is not set")
 	}
 
+	appEnv = os.Getenv("APP_ENV")
+	if appEnv == "" {
+		panic("Environmental variable APP_ENV is not set")
+	}
+
 	botToken := os.Getenv("TELEGRAM_BOT_TOKEN")
 	chatID := os.Getenv("TELEGRAM_CHAT_ID")
 
-	if botToken == "" || chatID == "" {
-		panic("TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables must be set")
+	if appEnv == "production" && (botToken == "" || chatID == "") {
+		panic("TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables must be set in production")
 	}
 
+	log.Printf("Starting broadcaster in %s mode", appEnv)
 	log.Printf("Connecting to NATS at %s...", natsURL)
 	nc, err := nats.Connect(natsURL)
 	if err != nil {
@@ -101,6 +109,10 @@ func sendMessage(nc *nats.Conn, m *nats.Msg, action string, token, chatID, user,
 		user,
 		hostname,
 	)
+	if appEnv == "staging" {
+		log.Printf("[STAGING] Skip sending message to Telegram:\n```%s\n```", message)
+		return
+	}
 
 	sendToTelegram(token, chatID, message)
 }
