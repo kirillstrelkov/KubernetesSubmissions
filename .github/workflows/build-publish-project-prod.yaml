@@ -1,11 +1,13 @@
-name: Build and publish application
+name: Build and publish application into production
 
 on:
   push:
+    tags:
+      - "v*"
 
 jobs:
-  build-publish:
-    name: Build, Push, Release
+  build-publish-prod:
+    name: Build, Push, Release to Production
     runs-on: ubuntu-latest
 
     steps:
@@ -72,7 +74,7 @@ jobs:
       - name: Update Kustomization Images
         if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
         run: |
-          cd the_project/kust-argocd
+          cd the_project/kust-argocd/production
 
           if [ "${{ steps.changes.outputs.frontend }}" == "true" ]; then
             kustomize edit set image TODO_APP_APP=kirillstrelkov/todo-app-app:$GITHUB_SHA

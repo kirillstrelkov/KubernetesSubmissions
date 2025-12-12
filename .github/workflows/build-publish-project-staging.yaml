@@ -1,0 +1,104 @@
+name: Build and publish application into staging
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-publish-staging:
+    name: Build, Push, Release to Staging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'the_project/todo-app/**'
+            backend:
+              - 'the_project/todo-backend/**'
+            broadcaster:
+              - 'the_project/todo-broadcaster/**'
+            post_script:
+              - 'the_project/scripts/post/**'
+            backup_script:
+              - 'the_project/scripts/pg-backup/**'
+
+      - name: Login to Docker Hub
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Frontend
+        if: steps.changes.outputs.frontend == 'true'
+        run: |
+          docker build -t "kirillstrelkov/todo-app-app:$GITHUB_SHA" ./the_project/todo-app
+          docker push "kirillstrelkov/todo-app-app:$GITHUB_SHA"
+
+      - name: Build Backend
+        if: steps.changes.outputs.backend == 'true'
+        run: |
+          docker build -t "kirillstrelkov/todo-backend-app:$GITHUB_SHA" ./the_project/todo-backend
+          docker push "kirillstrelkov/todo-backend-app:$GITHUB_SHA"
+
+      - name: Build Broadcaster
+        if: steps.changes.outputs.broadcaster == 'true'
+        run: |
+          docker build -t "kirillstrelkov/todo-broadcaster-app:$GITHUB_SHA" ./the_project/todo-broadcaster
+          docker push "kirillstrelkov/todo-broadcaster-app:$GITHUB_SHA"
+
+      - name: Build Post Script
+        if: steps.changes.outputs.post_script == 'true'
+        run: |
+          docker build -t "kirillstrelkov/create-post-run:$GITHUB_SHA" ./the_project/scripts/post
+          docker push "kirillstrelkov/create-post-run:$GITHUB_SHA"
+
+      - name: Build Backup Script
+        if: steps.changes.outputs.backup_script == 'true'
+        run: |
+          docker build -t "kirillstrelkov/pg-backup:$GITHUB_SHA" ./the_project/scripts/pg-backup
+          docker push "kirillstrelkov/pg-backup:$GITHUB_SHA"
+
+      - name: Set up Kustomize
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Update Kustomization Images
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
+        run: |
+          cd the_project/kust-argocd/staging
+
+          if [ "${{ steps.changes.outputs.frontend }}" == "true" ]; then
+            kustomize edit set image TODO_APP_APP=kirillstrelkov/todo-app-app:$GITHUB_SHA
+          fi
+
+          if [ "${{ steps.changes.outputs.backend }}" == "true" ]; then
+            kustomize edit set image TODO_BACKEND_APP=kirillstrelkov/todo-backend-app:$GITHUB_SHA
+          fi
+
+          if [ "${{ steps.changes.outputs.broadcaster }}" == "true" ]; then
+            kustomize edit set image TODO_BROADCASTER_APP=kirillstrelkov/todo-broadcaster-app:$GITHUB_SHA
+          fi
+
+          if [ "${{ steps.changes.outputs.post_script }}" == "true" ]; then
+            kustomize edit set image CREATE_POST_RUN=kirillstrelkov/create-post-run:$GITHUB_SHA
+          fi
+
+          if [ "${{ steps.changes.outputs.backup_script }}" == "true" ]; then
+            kustomize edit set image PG_BACKUP_IMAGE=kirillstrelkov/pg-backup:$GITHUB_SHA
+          fi
+
+      - name: Commit and Push changes
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(the_project): update image tags to ${{ github.sha }}"
+          file_pattern: "the_project/kust-argocd/kustomization.yaml"
