@@ -19,3 +19,8 @@ images:
 namePrefix: staging-
 resources:
   - ./../../kust-argocd/base
+patches:
+  - path: patch-namespace.yaml
+    target:
+      kind: Namespace
+      name: project-dev

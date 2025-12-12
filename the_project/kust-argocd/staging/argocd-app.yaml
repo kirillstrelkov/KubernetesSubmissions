@@ -13,7 +13,7 @@ spec:
       name: "custom-argocd-cmp-sops"
   destination:
     server: https://kubernetes.default.svc
-    namespace: project
+    namespace: project-staging
   syncPolicy:
     automated:
       prune: true

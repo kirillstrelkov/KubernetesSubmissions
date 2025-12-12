@@ -22,3 +22,7 @@ resources:
   - ./../../manifests/gke
 patches:
   - path: patch-broadcaster-dep.yaml
+  - path: patch-namespace.yaml
+    target:
+      kind: Namespace
+      name: project-dev
