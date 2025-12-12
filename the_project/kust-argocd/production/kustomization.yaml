@@ -18,7 +18,7 @@ images:
     newTag: a1f2e4f64863b314e95d27668e7d204b08ff70d7
 namePrefix: production-
 resources:
-  - ./../
+  - ./../../kust-argocd/
   - ./../../manifests/gke
 patches:
   - path: patch-broadcaster-dep.yaml

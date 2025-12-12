@@ -12,7 +12,7 @@ spec:
     plugin:
       name: "custom-argocd-cmp-sops"
   destination:
-    server: https://kubernetes.default.svc
+    server: https://kubernetes.default.svc # TODO: replace with GKE cluster server URL
     namespace: project
   syncPolicy:
     automated:
