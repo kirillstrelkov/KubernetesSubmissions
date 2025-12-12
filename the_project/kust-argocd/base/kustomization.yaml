@@ -15,7 +15,17 @@ images:
     newTag: a1f2e4f64863b314e95d27668e7d204b08ff70d7
   - name: TODO_BROADCASTER_APP
     newName: kirillstrelkov/todo-broadcaster-app
-    newTag: a1f2e4f64863b314e95d27668e7d204b08ff70d7
-namePrefix: staging-
+    newTag: 357ff3bb18d703801673809850de813e299ebbfe
 resources:
-  - ./../../kust-argocd/base
+  - ../../manifests/namespace.yaml
+  - ../../manifests/configmap.yaml
+  - ../../manifests/cronjob.yaml
+  - ../../manifests/deployment.yaml
+  - ../../manifests/broadcaster-dep.yaml
+  - ../../manifests/enc/secrets.yaml
+  - ../../manifests/persistent-volume-claim.yaml
+  - ../../manifests/persistent-volume.yaml
+  - ../../manifests/ingress.yaml
+  - ../../manifests/service.yaml
+  - ../../manifests/service_backend.yaml
+  - ../../manifests/statefulset.yaml
