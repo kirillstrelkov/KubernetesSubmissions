@@ -25,7 +25,7 @@ data:
           - |
             export SOPS_AGE_KEY_FILE=/helm-secrets/key.txt
             
-            pushd .. > /dev/null
+            pushd ../.. > /dev/null
             
             echo "Decrypting files in $(pwd)..." >&2
             
