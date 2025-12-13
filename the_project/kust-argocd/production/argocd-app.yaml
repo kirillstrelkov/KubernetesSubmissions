@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: todo-app
+  name: todo-app-gke
   namespace: argocd
 spec:
   project: default
@@ -12,7 +12,7 @@ spec:
     plugin:
       name: "custom-argocd-cmp-sops"
   destination:
-    server: https://kubernetes.default.svc # TODO: replace with GKE cluster server URL
+    server: https://35.228.130.152
     namespace: project-prod
   syncPolicy:
     automated:

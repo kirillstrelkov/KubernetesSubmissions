@@ -1,5 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: project-prod
 images:
   - name: CREATE_POST_RUN
     newName: kirillstrelkov/create-post-run
@@ -19,10 +20,20 @@ images:
 namePrefix: production-
 resources:
   - ./../../kust-argocd/base
-  - ./../../manifests/gke
+  - ./../../manifests/gke/gateway.yaml
+  - ./../../manifests/gke/health-check.yaml
+  - ./../../manifests/gke/backup-cronjob.yaml
+  - ./../../manifests/gke/persistent-volume-claim.yaml
 patches:
   - path: patch-broadcaster-dep.yaml
-  - path: patch-namespace.yaml
     target:
-      kind: Namespace
-      name: project-dev
+      kind: Deployment
+      name: todo-broadcaster-dep
+  - path: patch-config-map.yaml
+    target:
+      kind: ConfigMap
+      name: todo-app-cm
+  - path: patch-gateway.yaml
+    target:
+      kind: HTTPRoute
+      name: todo-app-route

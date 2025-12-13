@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-app-cm
+data:
+  POSTS_URL: http://staging-todo-backend-svc:8085/posts

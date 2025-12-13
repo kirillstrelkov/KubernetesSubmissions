@@ -17,15 +17,11 @@ images:
     newName: kirillstrelkov/todo-broadcaster-app
     newTag: 357ff3bb18d703801673809850de813e299ebbfe
 resources:
-  - ./namespace.yaml
   - ../../manifests/configmap.yaml
   - ../../manifests/cronjob.yaml
   - ../../manifests/deployment.yaml
   - ../../manifests/broadcaster-dep.yaml
   - ../../manifests/enc/secrets.yaml
-  - ../../manifests/persistent-volume-claim.yaml
-  - ../../manifests/persistent-volume.yaml
-  - ../../manifests/ingress.yaml
   - ../../manifests/service.yaml
   - ../../manifests/service_backend.yaml
   - ../../manifests/statefulset.yaml
