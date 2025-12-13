@@ -21,7 +21,6 @@ resources:
   - ../../manifests/cronjob.yaml
   - ../../manifests/deployment.yaml
   - ../../manifests/broadcaster-dep.yaml
-  - ../../manifests/enc/secrets.yaml
   - ../../manifests/service.yaml
   - ../../manifests/service_backend.yaml
   - ../../manifests/statefulset.yaml
