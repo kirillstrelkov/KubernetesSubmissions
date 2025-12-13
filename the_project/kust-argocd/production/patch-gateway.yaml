@@ -5,3 +5,18 @@ metadata:
 spec:
   parentRefs:
     - name: production-todo-app-gateway
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /posts
+      backendRefs:
+        - name: production-todo-backend-svc
+          port: 8085
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: production-todo-app-svc
+          port: 1234
