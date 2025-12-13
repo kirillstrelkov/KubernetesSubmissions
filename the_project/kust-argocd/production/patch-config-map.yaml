@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: todo-app-cm
 data:
-  POSTS_URL: http://prod-todo-backend-svc:8085/posts
+  POSTS_URL: http://production-todo-backend-svc:8085/posts
