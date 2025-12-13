@@ -27,3 +27,31 @@ gcloud artifacts repositories add-iam-policy-binding $DOCKER_REPO \
     --role="roles/artifactregistry.reader"
 
 ```
+
+## Add monitoring and NATS
+
+```bash
+# check gke cluster name
+kubectx
+
+# add monitoring
+cd monitoring
+kubectx <gke cluster>
+kubens default
+make monitoring
+
+# add NATS
+cd exercises/nats
+kubectx <gke cluster>
+kubens default
+make install
+```
+
+## Add to ArgoCD
+
+`argocd` cli should be preinstalled.
+
+```bash
+argocd login localhost:40917 --username admin --password <password for login> --insecure
+argocd cluster add <gke cluster>
+```
