@@ -3,7 +3,7 @@ name: Build and publish application into production
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 
 jobs:
   build-publish-prod:
@@ -67,6 +67,14 @@ jobs:
           docker build -t "kirillstrelkov/pg-backup:$GITHUB_SHA" ./the_project/scripts/pg-backup
           docker push "kirillstrelkov/pg-backup:$GITHUB_SHA"
 
+      - name: Checkout GitOps Repo
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: kirillstrelkov/todo-app-gitops
+          path: gitops
+          token: ${{ secrets.GITOPS_PAT }}
+
       - name: Set up Kustomize
         if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
         uses: imranismail/setup-kustomize@v2
@@ -74,7 +82,7 @@ jobs:
       - name: Update Kustomization Images
         if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
         run: |
-          cd the_project/kust-argocd/production
+          cd gitops/overlays/production
 
           if [ "${{ steps.changes.outputs.frontend }}" == "true" ]; then
             kustomize edit set image TODO_APP_APP=kirillstrelkov/todo-app-app:$GITHUB_SHA
@@ -98,7 +106,11 @@ jobs:
 
       - name: Commit and Push changes
         if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.backend == 'true' || steps.changes.outputs.broadcaster == 'true' || steps.changes.outputs.post_script == 'true' || steps.changes.outputs.backup_script == 'true'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore(the_project): update image tags to ${{ github.sha }}"
-          file_pattern: "the_project/kust-argocd/staging/kustomization.yaml"
+        run: |
+          cd gitops
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          git add .
+          git commit -m "chore: update image tags to ${{ github.sha }}"
+          git push
