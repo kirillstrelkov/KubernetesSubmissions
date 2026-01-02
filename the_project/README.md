@@ -91,3 +91,11 @@ make install-nats
 
 2. Login to grafana web app
 3. Create dashboard with <https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json>
+
+## ArgoCD applications
+
+In order to deploy 2 applications - staging and production:
+
+```bash
+make argocd
+```
