@@ -101,4 +101,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(the_project): update image tags to ${{ github.sha }}"
-          file_pattern: "the_project/kust-argocd/kustomization.yaml"
+          file_pattern: "the_project/kust-argocd/staging/kustomization.yaml"
