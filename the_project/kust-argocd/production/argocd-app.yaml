@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: "https://github.com/kirillstrelkov/KubernetesSubmissions.git"
-    targetRevision: v*
+    targetRevision: "*.*"
     path: the_project/kust-argocd/production
     plugin:
       name: "custom-argocd-cmp-sops"
