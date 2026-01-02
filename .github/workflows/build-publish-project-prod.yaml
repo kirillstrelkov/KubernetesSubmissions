@@ -13,11 +13,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract Tag Name
+        id: extract_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Get Previous Tag
+        id: previoustag
+        run: |
+          PREV_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1) 2>/dev/null || echo "")
+
+          if [ -z "$PREV_TAG" ]; then
+            echo "No previous tag found. This must be the first release."
+            PREV_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          echo "Previous tag identified as: $PREV_TAG"
+          echo "previous_ref=$PREV_TAG" >> $GITHUB_OUTPUT
 
       - name: Check for changes
         uses: dorny/paths-filter@v3
         id: changes
         with:
+          ref: ${{ github.ref }}
+          base: ${{ steps.previoustag.outputs.previous_ref }}
           filters: |
             frontend:
               - 'the_project/todo-app/**'
@@ -115,5 +136,5 @@ jobs:
           git commit -m "chore: update image tags to ${{ github.sha }}"
           git push
 
-          git tag -a "${GITHUB_REF#refs/tags/}" -m "New image updated with tag: ${GITHUB_REF#refs/tags/}"
-          git push origin "${GITHUB_REF#refs/tags/}"
+          git tag -a "${TAG_NAME}" -m "New image updated with tag: ${TAG_NAME}"
+          git push origin "${TAG_NAME}"
