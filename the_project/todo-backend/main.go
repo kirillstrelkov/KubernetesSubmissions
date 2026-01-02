@@ -295,7 +295,7 @@ func main() {
 
 	addr := ":" + port
 
-	fmt.Printf("Server started in port %s\n", port)
+	fmt.Printf("Server v2 started in port %s\n", port)
 
 	mux := http.NewServeMux()
 
