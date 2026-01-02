@@ -21,6 +21,7 @@ namePrefix: staging-
 resources:
   - ./secrets.yaml
   - ./../../kust-argocd/base
+  - ./../../manifests/ingress.yaml
   - ./../../manifests/persistent-volume-claim.yaml
   - ./../../manifests/persistent-volume.yaml
 patches:
