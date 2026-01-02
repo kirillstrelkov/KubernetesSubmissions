@@ -114,3 +114,6 @@ jobs:
           git add .
           git commit -m "chore: update image tags to ${{ github.sha }}"
           git push
+
+          git tag -a "${GITHUB_REF#refs/tags/}" -m "New image updated with tag: ${GITHUB_REF#refs/tags/}"
+          git push origin "${GITHUB_REF#refs/tags/}"
