@@ -25,6 +25,8 @@ resources:
   - ./../../manifests/gke/health-check.yaml
   - ./../../manifests/gke/backup-cronjob.yaml
   - ./../../manifests/gke/persistent-volume-claim.yaml
+configurations:
+  - kustomize-config.yaml
 patches:
   - path: patch-broadcaster-dep.yaml
     target:
