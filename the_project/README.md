@@ -1,5 +1,8 @@
 # Todo app
 
+> NOTE: All kubernetes files moved to <https://github.com/kirillstrelkov/todo-app-gitops>
+> Only ArgoCD deployments are tested.
+
 ## DBaaS vs DIY
 
 | feature       | DBaaS                                                                                                   | DIY                                                                                                                                                                                               |

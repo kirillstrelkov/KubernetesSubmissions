@@ -35,23 +35,11 @@ deploy: docker-build decrypt
 	k3d image import pg-backup
 	kubectl kustomize kust-local --load-restrictor LoadRestrictionsNone | kubectl apply -n project -f -
 
-encrypt:
-	@PUBKEY=$$(grep '# public key:' ../key.txt | cut -d ':' -f 2 | tr -d ' ') ; \
-	sops --encrypt --age $$PUBKEY --encrypted-regex '(stringData)' ./manifests/dec/secrets.yaml > ./manifests/enc/secrets.yaml
-
-decrypt:
-	mkdir -p ./manifests/dec/
-	export SOPS_AGE_KEY_FILE=../key.txt; \
-	sops --decrypt ./manifests/enc/secrets.yaml > ./manifests/dec/secrets.yaml
-
 clean:
 	kubectl delete namespace project || true
 	kubectl delete pvc todo-app-pvc || true
 	kubectl delete pv todo-app-pv || true
 	kubectl delete storageclasses todo-app-pv-class || true
-
-gke: docker-build-gke decrypt
-	kubectl apply -k .
 
 create-todos:
 	bash ./scripts/create_todos.sh
@@ -59,7 +47,3 @@ create-todos:
 label-nats-metrics:
 	kubectl label servicemonitors.monitoring.coreos.com -n prometheus my-nats-metrics $(kubectl -n prometheus get prometheus -ojson | grep -A 5 "serviceMonitorSelector" | grep kube | sed 's/"//g' | sed 's/: /=/')
 
-argocd:
-	# kubectl kustomize kust-argocd --load-restrictor LoadRestrictionsNone | kubectl apply -n project -f - || true
-	kubectl apply -f kust-argocd/production/argocd-app.yaml
-	kubectl apply -f kust-argocd/staging/argocd-app.yaml
