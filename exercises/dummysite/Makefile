@@ -250,12 +250,20 @@ $(shell go list -m -f '{{if .Replace}}{{.Replace.Version}}{{else}}{{.Version}}{{
 endef
 
 # My tasks
+.PHONY: apply-dummysite-sample apply-dummysite-wiki clean-dummysites show-dummysites
+
+apply-dummysite: apply-dummysite-sample apply-dummysite-wiki show-dummysites
+	@echo "Applied both sample DummySite resources."
 
 apply-dummysite-sample:
 	kubectl apply -f config/samples/stable.dwk_v1_dummysite.yaml
+	@echo "NOTE: to access via localhost you need to forward port:"
+	@echo "kubectl port-forward svc/dummysite-sample-svc 9999:80 -n exercises"
 
 apply-dummysite-wiki:
 	kubectl apply -f config/samples/dummysite_wiki.yaml
+	@echo "NOTE: to access via localhost you need to forward port:"
+	@echo "kubectl port-forward svc/dummysite-k8s-wiki-svc 9998:80 -n exercises"
 
 clean-dummysites:
 	kubectl delete -f config/samples/stable.dwk_v1_dummysite.yaml || true
