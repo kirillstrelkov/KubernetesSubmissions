@@ -14,5 +14,7 @@ kubebuilder create api --group stable.dwk --version v1 --kind DummySite
 
 make manifests
 make install
+
+# this will start the controller and attach it to the cluster
 make run
 ```

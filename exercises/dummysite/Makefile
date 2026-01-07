@@ -248,3 +248,20 @@ endef
 define gomodver
 $(shell go list -m -f '{{if .Replace}}{{.Replace.Version}}{{else}}{{.Version}}{{end}}' $(1) 2>/dev/null)
 endef
+
+# My tasks
+
+apply-dummysite-sample:
+	kubectl apply -f config/samples/stable.dwk_v1_dummysite.yaml
+
+apply-dummysite-wiki:
+	kubectl apply -f config/samples/dummysite_wiki.yaml
+
+clean-dummysites:
+	kubectl delete -f config/samples/stable.dwk_v1_dummysite.yaml || true
+	kubectl delete -f config/samples/dummysite_wiki.yaml || true
+
+show-dummysites:
+	kubectl get dummysites -A
+	kubectl get pods -n exercises
+	kubectl get svc -o wide -n exercises

@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/name: dummysite
     app.kubernetes.io/managed-by: kustomize
-  name: dummysite-sample
+  name: dummysite-k8s-wiki
   namespace: exercises
 spec:
-  website_url: "https://example.com"
+  website_url: "https://en.wikipedia.org/wiki/Kubernetes"
