@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- stable.dwk_v1_dummysite.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples
