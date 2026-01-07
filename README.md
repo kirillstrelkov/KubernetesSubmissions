@@ -59,3 +59,8 @@
 - [4.8.](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/4.8/the_project)
 - [4.9.](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/4.9/the_project)
 - [4.10.](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/4.10/the_project)
+- [4.10.](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/4.10/the_project)
+
+### Chapter 6
+
+- [5.1. DIY CRD & Controller](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/5.1/exercises/dummysite)
