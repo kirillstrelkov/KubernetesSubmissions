@@ -13,5 +13,6 @@ kubebuilder create api --group stable.dwk --version v1 --kind DummySite
 # ./internal/controller/dummysite_controller.go
 
 make manifests
-
+make install
+make run
 ```
