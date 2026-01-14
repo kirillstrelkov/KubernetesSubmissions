@@ -4,8 +4,8 @@ images:
   - name: PING_PONG_APP
     newName: ping-pong-app
     newTag: v1
+namespace: exercises
 resources:
-  - manifests/namespace.yaml
   - manifests/dec/deployment.yaml
   - manifests/dec/statefulset.yaml
   - manifests/analysistemplate.yaml

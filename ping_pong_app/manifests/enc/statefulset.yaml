@@ -1,85 +1,83 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-    name: postgres-set
-    namespace: exercises
+  name: postgres-set
 spec:
-    selector:
-        matchLabels:
-            app: postgres
-    serviceName: postgres
-    replicas: 1
-    template:
-        metadata:
-            labels:
-                app: postgres
-        spec:
-            containers:
-                - name: postgres
-                  image: postgres:13
-                  ports:
-                    - containerPort: 5432
-                      name: postgres
-                  env:
-                    - name: POSTGRES_USER
-                      value: ENC[AES256_GCM,data:CRKZ39dWtn8=,iv:x/ewMU1xWvoUs3ztZJam+/LY7GOIzrDdmGFsgFpyRpA=,tag:8Q6pT/0HHblrJFZq9sTuOw==,type:str]
-                    - name: POSTGRES_PASSWORD
-                      value: ENC[AES256_GCM,data:MVsxcVfKw4Q=,iv:q3dkkINz+2wvpwRkkid5LO5DfIRoQkSJKhJDReiDwE4=,tag:gdfkk3amYZ7hj6FqbTLnfQ==,type:str]
-                    - name: POSTGRES_DB
-                      value: ENC[AES256_GCM,data:E2oI1qgXbaVX3A==,iv:ouZ8Z9g9Eq8/z97vJvZL1itJa4qfxJBwQx0hVmtnhds=,tag:n7sMK9tE694SIT/PwuK2nw==,type:str]
-                  volumeMounts:
-                    - name: pgdata
-                      mountPath: /var/lib/postgresql/data
-                      subPath: postgres
-    volumeClaimTemplates:
-        - metadata:
-            name: pgdata
-          spec:
-            accessModes:
-                - ReadWriteOnce
-            resources:
-                requests:
-                    storage: 1Gi
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              value: ENC[AES256_GCM,data:+B1XDeuy1ko=,iv:0HWRX4BRf1VeH6l97X/9VkWTKBw294TPFBVUyaOZxQE=,tag:EHUElUafE2D1dhHQ1CUE0w==,type:str]
+            - name: POSTGRES_PASSWORD
+              value: ENC[AES256_GCM,data:RhBlVUfD7zI=,iv:4WkKBDAI8fNRYwrhiEMSMZoyyqm0Sti5TGqSSgqwnpk=,tag:CP6AY+9rtsLb8udrIbwUKA==,type:str]
+            - name: POSTGRES_DB
+              value: ENC[AES256_GCM,data:jbJ6lDGsdZs8Vw==,iv:o3t8n7szC14+Dv0GhagFUVyQt2GCI64Ss5/dzmbZWqI=,tag:JouFcQYN5kds75AT4y8ohw==,type:str]
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+  volumeClaimTemplates:
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
 sops:
-    age:
-        - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNQ1E1TUhMT3hiY1VVNXJN
-            OForajZjQzVWcnlsenpPakhFY25qekNPMkhNCkY1M2puUUNRQXROSGtubzNmSWVz
-            OXVZNDVWNkcrbCtYNWNFdWJ0bTFFMUkKLS0tIFlUMnhTNG9VbTBwUFlYYlRMUjZx
-            NnZOZFNzSi8yNFRyZjhJQWJOTjJqdEEKvdmKQbxI+uqLA29b86kjo9vXuaePS/ny
-            aSlzTB7IaRb8ZDr5lCEml/2PB/VZ002gTop8wQ/KOlbdorNGHPAQ0g==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-25T20:56:15Z"
-    mac: ENC[AES256_GCM,data:jm0085Lom4ZsU6FfzpLISZSUlHXKeRRk7fsIZ9rxvYOpDJnK2Pgde1sYGxTp4Jxde34AHYoTdh0Wk8FAGXt8w6+cR2S05Z3BgIk7SlnqA0L3YSToKym20Zeo8XSsEADUQSGGYOnSXOJz92ydjcuUmqwkXDcSNvcbkqiFuiXvKIk=,iv:oQtitPwCOP2vS5BIeM3sofjxdyOqJQu7JsVWT5eoKxA=,tag:6cF1djDTXpt21g0kh0/YcQ==,type:str]
-    encrypted_regex: (value)
-    version: 3.11.0
+  age:
+    - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArNnFHQm9CMzhoeWNMR0pa
+        Tk1tM1FwQWYxWFZZTTN5dnJQam9rZVlhenhVCmljRGdFWkZ1Yk1DbEZpWWQ1d3FH
+        c1RnR1k4NVQzdlNjNnpPYVdzN2lnajgKLS0tIGxsdGRXWkZxSnh2SXJGd3RQbkpk
+        eUZzRVRQYTN6MllKWGs1SU8xTUc4QlkK31w3KEhfCd2FRYQVKppJICeb6naIRm1Y
+        73+nJcb+074v4mrN91qUeC1EV1wyIbR4TntiJ9xvySUQcwpXS97enQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-01-14T15:53:09Z"
+  mac: ENC[AES256_GCM,data:rhG8mkCNGj2yjLRKXUb4VOYEs9fxJEXSSH5FJgaWo7EvNWDtUCIgHbRG7fu6or/J6jRbalbHBCzXuZyBXH1OBUe/lR4urzLy1yzrCUHZxHg1NEmkLi5jULhC/mQfu01/Ich3qla7bp0S7S5kRAFc9BT/vgahVMt7+cA+OtocM1I=,iv:j+gznPgF7KqlY0uGwMrop26g+YRFsHFBosxZHVvGY/8=,tag:W9pTyHt3vTc5YHmsd7aZ3Q==,type:str]
+  encrypted_regex: (value)
+  version: 3.11.0
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: postgres
-    namespace: exercises
+  name: postgres
 spec:
-    selector:
-        app: postgres
-    ports:
-        - port: 5432
-          targetPort: 5432
-    type: ClusterIP
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: ClusterIP
 sops:
-    age:
-        - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
-          enc: |
-            -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNQ1E1TUhMT3hiY1VVNXJN
-            OForajZjQzVWcnlsenpPakhFY25qekNPMkhNCkY1M2puUUNRQXROSGtubzNmSWVz
-            OXVZNDVWNkcrbCtYNWNFdWJ0bTFFMUkKLS0tIFlUMnhTNG9VbTBwUFlYYlRMUjZx
-            NnZOZFNzSi8yNFRyZjhJQWJOTjJqdEEKvdmKQbxI+uqLA29b86kjo9vXuaePS/ny
-            aSlzTB7IaRb8ZDr5lCEml/2PB/VZ002gTop8wQ/KOlbdorNGHPAQ0g==
-            -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-25T20:56:15Z"
-    mac: ENC[AES256_GCM,data:jm0085Lom4ZsU6FfzpLISZSUlHXKeRRk7fsIZ9rxvYOpDJnK2Pgde1sYGxTp4Jxde34AHYoTdh0Wk8FAGXt8w6+cR2S05Z3BgIk7SlnqA0L3YSToKym20Zeo8XSsEADUQSGGYOnSXOJz92ydjcuUmqwkXDcSNvcbkqiFuiXvKIk=,iv:oQtitPwCOP2vS5BIeM3sofjxdyOqJQu7JsVWT5eoKxA=,tag:6cF1djDTXpt21g0kh0/YcQ==,type:str]
-    encrypted_regex: (value)
-    version: 3.11.0
+  age:
+    - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArNnFHQm9CMzhoeWNMR0pa
+        Tk1tM1FwQWYxWFZZTTN5dnJQam9rZVlhenhVCmljRGdFWkZ1Yk1DbEZpWWQ1d3FH
+        c1RnR1k4NVQzdlNjNnpPYVdzN2lnajgKLS0tIGxsdGRXWkZxSnh2SXJGd3RQbkpk
+        eUZzRVRQYTN6MllKWGs1SU8xTUc4QlkK31w3KEhfCd2FRYQVKppJICeb6naIRm1Y
+        73+nJcb+074v4mrN91qUeC1EV1wyIbR4TntiJ9xvySUQcwpXS97enQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-01-14T15:53:09Z"
+  mac: ENC[AES256_GCM,data:rhG8mkCNGj2yjLRKXUb4VOYEs9fxJEXSSH5FJgaWo7EvNWDtUCIgHbRG7fu6or/J6jRbalbHBCzXuZyBXH1OBUe/lR4urzLy1yzrCUHZxHg1NEmkLi5jULhC/mQfu01/Ich3qla7bp0S7S5kRAFc9BT/vgahVMt7+cA+OtocM1I=,iv:j+gznPgF7KqlY0uGwMrop26g+YRFsHFBosxZHVvGY/8=,tag:W9pTyHt3vTc5YHmsd7aZ3Q==,type:str]
+  encrypted_regex: (value)
+  version: 3.11.0
