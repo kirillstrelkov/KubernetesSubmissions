@@ -64,6 +64,8 @@ deploy-logoutput-to-k3s-istio:
 	k3d image import -c k3s-iostio log-output-app:v4
 	make k3d-apply || true
 
+init-mesh:
+	kubectl label namespace exercises istio.io/dataplane-mode=ambient || true
 
-deploy-to-k3s-istio: install-argo-rollouts deploy-pingpong-to-k3s-istio deploy-logoutput-to-k3s-istio
+deploy-to-k3s-istio: install-argo-rollouts deploy-pingpong-to-k3s-istio deploy-logoutput-to-k3s-istio init-mesh
 	@echo "Done"
