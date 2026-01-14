@@ -21,11 +21,11 @@ spec:
               name: postgres
           env:
             - name: POSTGRES_USER
-              value: ENC[AES256_GCM,data:+B1XDeuy1ko=,iv:0HWRX4BRf1VeH6l97X/9VkWTKBw294TPFBVUyaOZxQE=,tag:EHUElUafE2D1dhHQ1CUE0w==,type:str]
+              value: ENC[AES256_GCM,data:w4D87FhepX4=,iv:I04+XwTV5zpx1bqtd1KvSA5zuey0G+Qs729Td4+DGGc=,tag:K7J1r90qI9wvHq+qnnFC6A==,type:str]
             - name: POSTGRES_PASSWORD
-              value: ENC[AES256_GCM,data:RhBlVUfD7zI=,iv:4WkKBDAI8fNRYwrhiEMSMZoyyqm0Sti5TGqSSgqwnpk=,tag:CP6AY+9rtsLb8udrIbwUKA==,type:str]
+              value: ENC[AES256_GCM,data:MQUC2fMkEQo=,iv:kPc+ZUXPgeWzh7Ka3y0/Jjrc9wFCd+maNshwzVkgw9A=,tag:mDSqvfqmE2vg4UmtLUCiHQ==,type:str]
             - name: POSTGRES_DB
-              value: ENC[AES256_GCM,data:jbJ6lDGsdZs8Vw==,iv:o3t8n7szC14+Dv0GhagFUVyQt2GCI64Ss5/dzmbZWqI=,tag:JouFcQYN5kds75AT4y8ohw==,type:str]
+              value: ENC[AES256_GCM,data:+0mKC86TkdaLIg==,iv:1AtDDsh6U6JApJhlvh3hmz0hsydoJDF+fgF4fXjAaII=,tag:iYTtDhClXqIGHaHIhMwtbw==,type:str]
           volumeMounts:
             - name: pgdata
               mountPath: /var/lib/postgresql/data
@@ -44,21 +44,21 @@ sops:
     - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArNnFHQm9CMzhoeWNMR0pa
-        Tk1tM1FwQWYxWFZZTTN5dnJQam9rZVlhenhVCmljRGdFWkZ1Yk1DbEZpWWQ1d3FH
-        c1RnR1k4NVQzdlNjNnpPYVdzN2lnajgKLS0tIGxsdGRXWkZxSnh2SXJGd3RQbkpk
-        eUZzRVRQYTN6MllKWGs1SU8xTUc4QlkK31w3KEhfCd2FRYQVKppJICeb6naIRm1Y
-        73+nJcb+074v4mrN91qUeC1EV1wyIbR4TntiJ9xvySUQcwpXS97enQ==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB4dUpuRmpwZ0NYSm1jbkxS
+        RjMxTzBGSlRwMDQ5ZFVzZE1JakZ2MDdyUlVvCnpSekJkTGFHUmIzbDdEM2dZOHdI
+        bEJzYWZUYS9IeXNBaEE0VXQ2Ynd2aWsKLS0tIFYzaG1DV3ZoRExoSnUrRE4zMU9Q
+        SERkTnYxT2I4cWtDY2g4dnRkUkNQUFEKQsQnCGakyXzooNK6ffwU0OscfedvB/Na
+        SiZzxwiScF1xCvYSi4qG+K/bzsH7HA7QIk+8p3JwfjK+wAddaBSJdg==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2026-01-14T15:53:09Z"
-  mac: ENC[AES256_GCM,data:rhG8mkCNGj2yjLRKXUb4VOYEs9fxJEXSSH5FJgaWo7EvNWDtUCIgHbRG7fu6or/J6jRbalbHBCzXuZyBXH1OBUe/lR4urzLy1yzrCUHZxHg1NEmkLi5jULhC/mQfu01/Ich3qla7bp0S7S5kRAFc9BT/vgahVMt7+cA+OtocM1I=,iv:j+gznPgF7KqlY0uGwMrop26g+YRFsHFBosxZHVvGY/8=,tag:W9pTyHt3vTc5YHmsd7aZ3Q==,type:str]
+  lastmodified: "2026-01-14T16:08:09Z"
+  mac: ENC[AES256_GCM,data:3y5KxQ5ZEMZwK/lKK862T5GKJZQI3zqJs51RraT8bywJSVQNq5/2BYkZjdnYkRVNbzsRsNopOKo4CsMmjTx9LozaNOxwSrajA2WEecSEHTuB2wmLiHUhj/kKscbRPD7K2rnnuGBu9PfvFqrhqr2mKftFs3GVnsgjaP2jxiArRMo=,iv:sOJn3nqppcrCfbYbE2qRf0dmCBnMwQgM45UwEx7ESYQ=,tag:JJlujICwNYDKZ5+JphBLPw==,type:str]
   encrypted_regex: (value)
   version: 3.11.0
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: postgres-svc
 spec:
   selector:
     app: postgres
@@ -71,13 +71,13 @@ sops:
     - recipient: age1ekqjgmayst3ugq4fv405gts384l7jd4d4fqnpazxwg5v0vauwfjqa2x7pc
       enc: |
         -----BEGIN AGE ENCRYPTED FILE-----
-        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArNnFHQm9CMzhoeWNMR0pa
-        Tk1tM1FwQWYxWFZZTTN5dnJQam9rZVlhenhVCmljRGdFWkZ1Yk1DbEZpWWQ1d3FH
-        c1RnR1k4NVQzdlNjNnpPYVdzN2lnajgKLS0tIGxsdGRXWkZxSnh2SXJGd3RQbkpk
-        eUZzRVRQYTN6MllKWGs1SU8xTUc4QlkK31w3KEhfCd2FRYQVKppJICeb6naIRm1Y
-        73+nJcb+074v4mrN91qUeC1EV1wyIbR4TntiJ9xvySUQcwpXS97enQ==
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB4dUpuRmpwZ0NYSm1jbkxS
+        RjMxTzBGSlRwMDQ5ZFVzZE1JakZ2MDdyUlVvCnpSekJkTGFHUmIzbDdEM2dZOHdI
+        bEJzYWZUYS9IeXNBaEE0VXQ2Ynd2aWsKLS0tIFYzaG1DV3ZoRExoSnUrRE4zMU9Q
+        SERkTnYxT2I4cWtDY2g4dnRkUkNQUFEKQsQnCGakyXzooNK6ffwU0OscfedvB/Na
+        SiZzxwiScF1xCvYSi4qG+K/bzsH7HA7QIk+8p3JwfjK+wAddaBSJdg==
         -----END AGE ENCRYPTED FILE-----
-  lastmodified: "2026-01-14T15:53:09Z"
-  mac: ENC[AES256_GCM,data:rhG8mkCNGj2yjLRKXUb4VOYEs9fxJEXSSH5FJgaWo7EvNWDtUCIgHbRG7fu6or/J6jRbalbHBCzXuZyBXH1OBUe/lR4urzLy1yzrCUHZxHg1NEmkLi5jULhC/mQfu01/Ich3qla7bp0S7S5kRAFc9BT/vgahVMt7+cA+OtocM1I=,iv:j+gznPgF7KqlY0uGwMrop26g+YRFsHFBosxZHVvGY/8=,tag:W9pTyHt3vTc5YHmsd7aZ3Q==,type:str]
+  lastmodified: "2026-01-14T16:08:09Z"
+  mac: ENC[AES256_GCM,data:3y5KxQ5ZEMZwK/lKK862T5GKJZQI3zqJs51RraT8bywJSVQNq5/2BYkZjdnYkRVNbzsRsNopOKo4CsMmjTx9LozaNOxwSrajA2WEecSEHTuB2wmLiHUhj/kKscbRPD7K2rnnuGBu9PfvFqrhqr2mKftFs3GVnsgjaP2jxiArRMo=,iv:sOJn3nqppcrCfbYbE2qRf0dmCBnMwQgM45UwEx7ESYQ=,tag:JJlujICwNYDKZ5+JphBLPw==,type:str]
   encrypted_regex: (value)
   version: 3.11.0
