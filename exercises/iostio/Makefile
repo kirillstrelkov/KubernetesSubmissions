@@ -67,3 +67,12 @@ test-traffic-split:
 
 install-ingressgateway:
 	istioctl install --set profile=ambient --set components.ingressGateways[0].name=istio-ingressgateway --set components.ingressGateways[0].enabled=true -y
+
+clean:
+	kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.28/samples/bookinfo/platform/kube/bookinfo.yaml
+	kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.28/samples/bookinfo/platform/kube/bookinfo-versions.yaml
+	kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.28/samples/bookinfo/gateway-api/bookinfo-gateway.yaml
+	kubectl delete -f auth-policy.yaml
+	kubectl delete -f auth-policy-l7.yaml
+	kubectl delete -f auth-policy-l4.yaml
+	kubectl delete -f routing.yaml
