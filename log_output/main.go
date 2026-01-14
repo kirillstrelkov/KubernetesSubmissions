@@ -47,29 +47,27 @@ func getCounter() (string, error) {
 
 	return fmt.Sprintf("%d", counter), nil
 }
-
-func printConfigValues() {
-	msg := os.Getenv("MESSAGE")
-
+func printConfigValues(w io.Writer) {
 	fs, err := os.Open("/tmp/information.txt")
 	if err != nil {
-		fmt.Printf("Error opening file: %v\n", err)
+		fmt.Fprintf(w, "Error opening file: %v\n", err)
 		return
 	}
 	defer fs.Close()
 
 	content, err := io.ReadAll(fs)
 	if err != nil {
-		fmt.Printf("Error reading file: %v\n", err)
+		fmt.Fprintf(w, "Error reading file: %v\n", err)
 		return
 	}
 
-	fmt.Printf("file content: %s", content)
-	fmt.Printf("env variable: MESSAGE=%s\n", msg)
+	msg := os.Getenv("MESSAGE")
+	fmt.Fprintf(w, "file content: %s\n", content)
+	fmt.Fprintf(w, "env variable: MESSAGE=%s\n", msg)
 }
 
 func main() {
-	printConfigValues()
+	printConfigValues(os.Stdout)
 
 	randomUUID = uuid.New().String()
 	fmt.Printf("Startup: Generated and stored UUID: %s\n", randomUUID)
@@ -126,5 +124,7 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 
 	// html out
 	fmt.Fprintln(w, line)
-	fmt.Fprintf(w, "Ping / Pongs: %s", counter)
+	fmt.Fprintf(w, "Ping / Pongs: %s\n", counter)
+
+	printConfigValues(w)
 }

@@ -1,5 +1,7 @@
 all: docker-build import k3d-apply
 
+SHELL := /bin/bash
+.ONESHELL:
 .PHONY: all fmt lint build run import docker-build docker-run
 
 fmt:
@@ -20,9 +22,7 @@ import:
 	k3d image import log-output-app
 
 docker-build:
-	docker build -t log-output-app .
-	docker build -t $$DOCKER_FULL_REPO/log-output-app:v1 .
-	docker push $$DOCKER_FULL_REPO/log-output-app:v1
+	docker build -t log-output-app:v4 .
 
 docker-run:
 	docker run -d --rm log-output-app
@@ -45,3 +45,25 @@ gke:
 
 clean:
 	kubectl delete namespace exercises || true
+
+install-argo-rollouts:
+	pushd ../exercises/probes
+	make setup || true
+	popd
+
+deploy-pingpong-to-k3s-istio:
+	pushd ../ping_pong_app
+	make docker-build
+	k3d image import -c k3s-iostio ping-pong-app:v1
+	k3d image import -c k3s-iostio ping-pong-app:v2
+	make k3d-apply || true
+	popd
+
+deploy-logoutput-to-k3s-istio:
+	make docker-build
+	k3d image import -c k3s-iostio log-output-app:v4
+	make k3d-apply || true
+
+
+deploy-to-k3s-istio: install-argo-rollouts deploy-pingpong-to-k3s-istio deploy-logoutput-to-k3s-istio
+	@echo "Done"

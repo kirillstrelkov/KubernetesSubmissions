@@ -16,3 +16,9 @@ To enable Gateway API:
 ```bash
 gcloud container clusters update dwk-cluster --location=europe-north1-b --gateway-api=standard
 ```
+
+## Deploy to cluster with service mesh k3s-iostio
+
+```bash
+make deploy-to-k3s-istio
+```
