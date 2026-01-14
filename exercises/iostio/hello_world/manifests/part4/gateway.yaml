@@ -1,0 +1,49 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: hello-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: helloworld
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - hello-gateway
+  http:
+    - match:
+        - uri:
+            exact: /
+      route:
+        - destination:
+            host: hello-svc-v1
+            port:
+              number: 80
+          weight: 50
+        - destination:
+            host: hello-svc-v2
+            port:
+              number: 80
+          weight: 50
+      fault:
+        delay:
+          percentage:
+            value: 50
+          fixedDelay: 3s
+        abort:
+          httpStatus: 500
+          percentage:
+            value: 25

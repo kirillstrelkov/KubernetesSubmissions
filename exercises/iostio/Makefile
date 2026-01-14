@@ -1,5 +1,10 @@
+k3d-iostio-start:
+	k3d cluster start k3s-iostio
 
-k3d-iostio:
+k3d-iostio-stop:
+	k3d cluster start k3s-iostio
+
+k3d-iostio-create:
 	k3d cluster create --api-port 6550 -p '9080:80@loadbalancer' -p '9443:443@loadbalancer' --agents 2 --k3s-arg '--disable=traefik@server:*'
 # 	helm install istio-cni istio/cni -n istio-system --set profile=ambient --set global.platform=k3d --wait
 	istioctl install --set profile=ambient --set values.global.platform=k3d
@@ -59,3 +64,6 @@ split-traffic:
 
 test-traffic-split:
 	kubectl exec deploy/curl -- sh -c "for i in \$$(seq 1 100); do curl -s http://productpage:9080/productpage | grep reviews-v.-; done"
+
+install-ingressgateway:
+	istioctl install --set profile=ambient --set components.ingressGateways[0].name=istio-ingressgateway --set components.ingressGateways[0].enabled=true -y

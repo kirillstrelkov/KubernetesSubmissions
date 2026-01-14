@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-dep-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: v1
+    spec:
+      containers:
+        - name: seedimage
+          image: hello:1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-svc-v1
+spec:
+  type: ClusterIP
+  selector:
+    app: hello
+    version: v1
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-dep-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: v2
+    spec:
+      containers:
+        - name: seedimage
+          image: hello:2
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-svc-v2
+spec:
+  type: ClusterIP
+  selector:
+    app: hello
+    version: v2
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
