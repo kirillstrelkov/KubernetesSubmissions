@@ -4,6 +4,7 @@ images:
   - name: LOG_OUTPUT_APP
     newName: log-output-app
     newTag: v4
+namespace: exercises
 resources:
   - manifests/namespace.yaml
   - manifests/configmap.yaml
