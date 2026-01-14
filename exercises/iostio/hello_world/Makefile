@@ -4,7 +4,13 @@ clean-part1:
 clean-part2:
 	kubectl delete -f manifests/part2/ || true
 
-clean: clean-part1 clean-part2
+clean-part3:
+	kubectl delete -f manifests/part3/ || true
+
+clean-part4:
+	kubectl delete -f manifests/part4/ || true
+
+clean: clean-part1 clean-part2 clean-part3 clean-part4
 	@echo "Cleaned up all resources."
 
 deploy-part1: clean
