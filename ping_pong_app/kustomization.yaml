@@ -3,7 +3,7 @@ kind: Kustomization
 images:
   - name: PING_PONG_APP
     newName: ping-pong-app
-    newTag: v1
+    newTag: v3
 namespace: exercises
 resources:
   - manifests/dec/deployment.yaml

@@ -28,8 +28,7 @@ docker-build-gke:
 	docker push $$DOCKER_FULL_REPO/ping-pong-app:v3
 
 docker-build:
-	docker build -t ping-pong-app:v1 .
-	docker build -t ping-pong-app:v2 .
+	docker build -t ping-pong-app:v3 .
 	docker build -t kirillstrelkov/ping-pong-app:v3 .
 	docker push kirillstrelkov/ping-pong-app:v3
 
@@ -37,10 +36,9 @@ docker-run:
 	docker run --rm ping-pong-app
 
 import:
-	k3d image import ping-pong-app:v1
-	k3d image import ping-pong-app:v2
+	k3d image import ping-pong-app:v3
 
-k3d-apply: decrypt
+k3d-apply: ns decrypt
 	kubectl apply -k .
 
 argocd-deploy: ns
