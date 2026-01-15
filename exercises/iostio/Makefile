@@ -2,7 +2,7 @@ k3d-iostio-start:
 	k3d cluster start k3s-iostio
 
 k3d-iostio-stop:
-	k3d cluster start k3s-iostio
+	k3d cluster stop k3s-iostio
 
 k3d-iostio-create:
 	k3d cluster create --api-port 6550 -p '9080:80@loadbalancer' -p '9443:443@loadbalancer' --agents 2 --k3s-arg '--disable=traefik@server:*'
