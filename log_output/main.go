@@ -125,6 +125,32 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 	// html out
 	fmt.Fprintln(w, line)
 	fmt.Fprintf(w, "Ping / Pongs: %s\n", counter)
-
 	printConfigValues(w)
+
+	msg := getGreeterMessage()
+	fmt.Fprintf(w, "greetings: %s\n", msg)
+}
+
+func getGreeterMessage() string {
+	svc := os.Getenv("GREETER_SERVICE")
+	if svc == "" {
+		return "GREETER_SERVICE not set"
+	}
+	resp, err := http.Get(fmt.Sprintf("http://%s/", svc))
+	if err != nil {
+		return fmt.Sprintf("error making request: %v", err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Sprintf("received non-OK status code: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Sprintf("error reading response body: %v", err)
+	}
+
+	return string(body)
 }

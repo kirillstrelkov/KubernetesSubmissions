@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: log-output-dep
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: log-output-app
@@ -26,6 +26,8 @@ spec:
                 configMapKeyRef:
                   name: log-output-cm
                   key: MESSAGE
+            - name: GREETER_SERVICE
+              value: greeter-svc:80
           volumeMounts:
             - name: config-vol
               mountPath: /tmp

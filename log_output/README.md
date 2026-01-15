@@ -1,6 +1,6 @@
-## Log output app
+# Log output app
 
-### Deploy to k3d cluster
+## Deploy to k3d cluster
 
 1. Build, import and deploy `make`
 
@@ -19,6 +19,26 @@ gcloud container clusters update dwk-cluster --location=europe-north1-b --gatewa
 
 ## Deploy to cluster with service mesh k3s-iostio
 
+It is expected that proper cluster is up and running. Check [../exercises/iostio/README.md](../exercises/iostio/README.md)
+
+> Be sure that proper gateway used(mesh is in ambient mode not sidecar) otherwise port 80 will be blocked.
+
 ```bash
+# build apps, created needed resources and setup service mesh
 make deploy-to-k3s-istio
+
+# send multiple requests
+make load
+```
+
+Check [./Makefile](./Makefile) for more information
+
+Output should look like:
+![alt text](./docs/logoutput_mesh.png "Title")
+
+### Kiali dashboard
+
+```bash
+cd ../exercises/iostio
+make kiali
 ```

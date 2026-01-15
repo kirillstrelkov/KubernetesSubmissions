@@ -1,6 +1,6 @@
 all: fmt lint build
 
-.PHONY: all fmt lint build run
+.PHONY: all fmt lint build run import docker-build
 
 fmt:
 	go fmt ./...
@@ -15,3 +15,6 @@ build:
 
 run:
 	go run main.go
+
+docker-build:
+	docker build -t greeter:v1 .

@@ -1,5 +1,7 @@
 # Ping pong app
 
+> [../log_output/README.md](../log_output/README.md) to see how ping pong app used as service
+
 ## Deploy to k3d cluster
 
 1. Build, import, deploy `make`

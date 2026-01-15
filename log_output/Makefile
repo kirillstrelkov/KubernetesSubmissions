@@ -54,12 +54,11 @@ install-argo-rollouts:
 deploy-pingpong-to-k3s-istio:
 	pushd ../ping_pong_app
 	make docker-build
-	k3d image import -c k3s-iostio ping-pong-app:v1
-	k3d image import -c k3s-iostio ping-pong-app:v2
+	k3d image import -c k3s-iostio ping-pong-app:v3
 	make k3d-apply || true
 	popd
 
-deploy-logoutput-to-k3s-istio:
+deploy-logoutput-to-k3s-istio: build-greeter
 	make docker-build
 	k3d image import -c k3s-iostio log-output-app:v4
 	make k3d-apply || true
@@ -67,5 +66,26 @@ deploy-logoutput-to-k3s-istio:
 init-mesh:
 	kubectl label namespace exercises istio.io/dataplane-mode=ambient || true
 
-deploy-to-k3s-istio: install-argo-rollouts deploy-pingpong-to-k3s-istio deploy-logoutput-to-k3s-istio init-mesh
-	@echo "Done"
+apply-istio-changes:
+	istioctl waypoint apply --enroll-namespace --wait
+
+build-greeter:
+	pushd ./greeter
+	make docker-build
+	k3d image import -c k3s-iostio greeter:v1
+	popd
+
+deploy-to-k3s-istio: install-argo-rollouts deploy-pingpong-to-k3s-istio init-mesh deploy-logoutput-to-k3s-istio apply-istio-changes
+	@echo "Done. You can now access the log-output app at http://localhost:9080/"
+
+load:
+	@echo "Ping 7 times..."
+	@for i in $$(seq 1 7); do \
+		echo "";\
+		curl -s http://localhost:9080/ping; \
+	done
+	@echo "Sending 100 requests..."
+	@for i in $$(seq 1 100); do \
+		curl -s http://localhost:9080/ | grep "greeting"; \
+	done
+	@echo "Done."

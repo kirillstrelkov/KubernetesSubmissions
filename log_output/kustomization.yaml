@@ -11,3 +11,7 @@ resources:
   - manifests/deployment.yaml
   - manifests/ingress.yaml
   - manifests/service.yaml
+  - manifests/greeter/deployment.yaml
+  - manifests/greeter/service.yaml
+  - manifests/greeter/route.yaml
+  - manifests/istio-gateway.yaml
