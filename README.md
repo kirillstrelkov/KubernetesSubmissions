@@ -65,3 +65,4 @@
 
 - [5.1. DIY CRD & Controller](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/5.1/exercises/dummysite)
 - [5.2. Getting started with Istio service mesh](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/5.2/exercises/iostio)
+- [5.3. Log app, the Service Mesh Edition](https://github.com/kirillstrelkov/KubernetesSubmissions/tree/5.3/log_output/)
