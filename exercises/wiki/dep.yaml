@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-dep
+  labels:
+    app: wiki-app
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wiki-app
+  template:
+    metadata:
+      labels:
+        app: wiki-app
+    spec:
+      volumes:
+        - name: html-content
+          emptyDir: {}
+
+      initContainers:
+        - name: init-fetcher
+          image: curlimages/curl
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Init: Fetching Kubernetes Wiki page..."
+              curl -L -o /data/index.html "https://en.wikipedia.org/wiki/Kubernetes"
+          volumeMounts:
+            - name: html-content
+              mountPath: /data
+
+      containers:
+        - name: nginx-main
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html-content
+              mountPath: /usr/share/nginx/html
+
+        - name: random-updater
+          image: curlimages/curl
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              while true; do
+                # Calculate random seconds between 300 (5m) and 900 (15m)
+                # Formula: (RANDOM % (MAX-MIN+1)) + MIN
+                # 15m - 5m = 600 seconds range
+                SLEEP_TIME=$(( (RANDOM % 601) + 300 ))
+                
+                echo "Sidecar: Waiting ${SLEEP_TIME} seconds before next update..."
+                sleep $SLEEP_TIME
+                
+                echo "Sidecar: Fetching random Wiki page..."
+                curl -L -o /data/index.html "https://en.wikipedia.org/wiki/Special:Random"
+              done
+          volumeMounts:
+            - name: html-content
+              mountPath: /data
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki-svc
+spec:
+  selector:
+    app: wiki-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
